@@ -1,5 +1,4 @@
 using NDatabase.Api;
-using NDatabase.Tool.Wrappers;
 
 namespace NDatabase.Core
 {

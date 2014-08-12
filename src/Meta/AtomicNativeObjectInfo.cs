@@ -34,7 +34,7 @@ namespace NDatabase.Meta
 
         public override bool Equals(object obj)
         {
-            if (obj == null || !(obj is AtomicNativeObjectInfo))
+            if (!(obj is AtomicNativeObjectInfo))
                 return false;
 
             var noi = (AtomicNativeObjectInfo) obj;

@@ -39,7 +39,7 @@ namespace NDatabase.Transaction
 
         public int CompareTo(object o)
         {
-            if (o == null || !(o is Session))
+            if (!(o is Session))
                 return -100;
 
             var session = (ISession) o;
@@ -150,7 +150,7 @@ namespace NDatabase.Transaction
 
         public override bool Equals(object obj)
         {
-            if (obj == null || !(obj is Session))
+            if (!(obj is Session))
                 return false;
             var session = (ISession) obj;
             return GetId().Equals(session.GetId());

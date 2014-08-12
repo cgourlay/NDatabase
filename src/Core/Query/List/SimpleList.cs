@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using NDatabase.Api;
 using NDatabase.Exceptions;
-using NDatabase.Tool.Wrappers;
 
 namespace NDatabase.Core.Query.List
 {

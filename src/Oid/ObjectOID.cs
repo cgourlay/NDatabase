@@ -10,7 +10,7 @@ namespace NDatabase.Oid
 
         public override int CompareTo(OID oid)
         {
-            if (oid == null || !(oid is ObjectOID))
+            if (!(oid is ObjectOID))
                 return -1000;
 
             var otherOid = oid;

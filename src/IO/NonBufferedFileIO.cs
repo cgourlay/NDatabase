@@ -6,16 +6,13 @@ namespace NDatabase.IO
 {
     internal sealed class NonBufferedFileIO : INonBufferedFileIO
     {
-        private readonly string _wholeFileName;
-
         private IOdbStream _odbWriter;
 
         internal NonBufferedFileIO(string fileName)
         {
             CurrentPositionForDirectWrite = -1;
 
-            _wholeFileName = fileName;
-            _odbWriter = new OdbFileStream(_wholeFileName);
+            _odbWriter = new OdbFileStream(fileName);
         }
 
         internal NonBufferedFileIO()

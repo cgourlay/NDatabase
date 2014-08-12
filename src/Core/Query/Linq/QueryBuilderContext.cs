@@ -8,14 +8,12 @@ namespace NDatabase.Core.Query.Linq
     {
         private readonly Stack<IConstraint> _constraints = new Stack<IConstraint>();
         private readonly Stack<IQuery> _descendStack = new Stack<IQuery>();
-        private readonly IQuery _root;
 
         private Type _descendigFieldEnum;
 
         public QueryBuilderContext(IQuery root)
         {
-            _root = root;
-            CurrentQuery = _root;
+            CurrentQuery = root;
         }
 
         public IQuery CurrentQuery { get; private set; }

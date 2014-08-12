@@ -17,7 +17,7 @@ namespace NDatabase.Indexing
 
         public int CompareTo(object o)
         {
-            if (o == null || !(o is SimpleCompareKey))
+            if (!(o is SimpleCompareKey))
                 return -1;
 
             var ckey = (SimpleCompareKey) o;
@@ -38,7 +38,7 @@ namespace NDatabase.Indexing
 
         public override bool Equals(object o)
         {
-            if (o == null || !(o is SimpleCompareKey))
+            if (!(o is SimpleCompareKey))
                 return false;
 
             var ckey = (SimpleCompareKey) o;

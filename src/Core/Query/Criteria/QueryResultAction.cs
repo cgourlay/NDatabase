@@ -2,7 +2,6 @@ using NDatabase.Api;
 using NDatabase.Api.Query;
 using NDatabase.Core.Query.List;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
 
 namespace NDatabase.Core.Query.Criteria
 {

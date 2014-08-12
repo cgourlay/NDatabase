@@ -2,7 +2,6 @@ using System;
 using System.Text;
 using NDatabase.Api;
 using NDatabase.Meta;
-using NDatabase.Oid;
 
 namespace NDatabase.Core.Engine
 {
@@ -11,9 +10,9 @@ namespace NDatabase.Core.Engine
     /// </summary>
     internal static class ByteArrayConverter
     {
-        private static readonly byte[] BytesForTrue = new byte[] {1};
+        private static readonly byte[] BytesForTrue = {1};
 
-        private static readonly byte[] BytesForFalse = new byte[] {0};
+        private static readonly byte[] BytesForFalse = {0};
 
         private static readonly int IntSize = OdbType.Integer.Size;
 

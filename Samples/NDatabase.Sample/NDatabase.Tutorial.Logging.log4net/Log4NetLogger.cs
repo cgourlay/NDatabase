@@ -1,5 +1,4 @@
 using System;
-using NDatabase.Tool;
 using log4net;
 
 namespace NDatabase.Tutorial.Logging.log4net

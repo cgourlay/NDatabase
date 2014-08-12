@@ -120,12 +120,12 @@ namespace NDatabase.Meta
 
         internal static readonly int DatabaseHeaderProtectedZoneSize = DatabaseHeaderCurrentIdBlockPosition;
 
-        internal static readonly int[] DatabaseHeaderPositions = new[]
-            {
-                DatabaseHeaderVersionPosition, DatabaseHeaderDatabaseIdPosition, DatabaseHeaderLastTransactionId,
-                DatabaseHeaderNumberOfClassesPosition, DatabaseHeaderFirstClassOid,
-                DatabaseHeaderLastCloseStatusPosition, DatabaseHeaderDatabaseCharacterEncodingPosition, DatabaseHeaderEmptySpaceWhichCouldBeUsedInTheFuture
-            };
+        internal static readonly int[] DatabaseHeaderPositions =
+        {
+            DatabaseHeaderVersionPosition, DatabaseHeaderDatabaseIdPosition, DatabaseHeaderLastTransactionId,
+            DatabaseHeaderNumberOfClassesPosition, DatabaseHeaderFirstClassOid,
+            DatabaseHeaderLastCloseStatusPosition, DatabaseHeaderDatabaseCharacterEncodingPosition, DatabaseHeaderEmptySpaceWhichCouldBeUsedInTheFuture
+        };
 
         private static readonly long ClassOffsetBlockType = ClassOffsetBlockSize + OdbType.Integer.Size;
 

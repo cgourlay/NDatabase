@@ -4,7 +4,6 @@ using System.Text;
 using NDatabase.Api;
 using NDatabase.Btree;
 using NDatabase.Exceptions;
-using NDatabase.Tool.Wrappers;
 
 namespace NDatabase.Core.Query.List
 {

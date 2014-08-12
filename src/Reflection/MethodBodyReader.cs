@@ -9,7 +9,6 @@ namespace NDatabase.Reflection
     {
         private static readonly OpCode[] OneByteOpcodes = new OpCode[0xe1];
         private static readonly OpCode[] TwoBytesOpcodes = new OpCode[0x1f];
-        private readonly MethodBody _body;
         private readonly ByteBuffer _il;
         private readonly List<Instruction> _instructions = new List<Instruction>();
         private readonly IList<LocalVariableInfo> _locals;
@@ -37,11 +36,11 @@ namespace NDatabase.Reflection
         private MethodBodyReader(MethodBase method)
         {
             _method = method;
-            _body = method.GetMethodBody();
-            if (_body == null)
+            var body = method.GetMethodBody();
+            if (body == null)
                 throw new ArgumentException("Method has no body");
 
-            var iLAsByteArray = _body.GetILAsByteArray();
+            var iLAsByteArray = body.GetILAsByteArray();
             if (iLAsByteArray == null)
                 throw new ArgumentException("Can not get the body of the method");
 
@@ -52,7 +51,7 @@ namespace NDatabase.Reflection
                 _typeArguments = method.DeclaringType.GetGenericArguments();
 
             _parameters = method.GetParameters();
-            _locals = _body.LocalVariables;
+            _locals = body.LocalVariables;
             _module = method.Module;
             _il = new ByteBuffer(iLAsByteArray);
         }

@@ -26,14 +26,14 @@ namespace NDatabase
             DependencyContainer.Register<IMetaModelCompabilityChecker>(() => new MetaModelCompabilityChecker());
             DependencyContainer.Register<IQueryManager>(() => new QueryManager());
 
-            DependencyContainer.Register<IOdbForTrigger>((storageEngine) => new Odb((IStorageEngine)storageEngine));
+            DependencyContainer.Register<IOdbForTrigger>(storageEngine => new Odb((IStorageEngine)storageEngine));
 
             DependencyContainer.Register<IReflectionService>(() => new ReflectionService());
 
-            DependencyContainer.Register<IObjectWriter>((storageEngine) => new ObjectWriter((IStorageEngine)storageEngine));
-            DependencyContainer.Register<IObjectReader>((storageEngine) => new ObjectReader((IStorageEngine)storageEngine));
+            DependencyContainer.Register<IObjectWriter>(storageEngine => new ObjectWriter((IStorageEngine)storageEngine));
+            DependencyContainer.Register<IObjectReader>(storageEngine => new ObjectReader((IStorageEngine)storageEngine));
 
-            DependencyContainer.Register<ISession>((storageEngine) => new LocalSession((IStorageEngine)storageEngine));
+            DependencyContainer.Register<ISession>(storageEngine => new LocalSession((IStorageEngine)storageEngine));
         }
 
         /// <summary>
