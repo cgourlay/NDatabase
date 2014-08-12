@@ -42,6 +42,14 @@ namespace NDatabase.Core.Engine
     /// </summary>
     internal sealed class ObjectReader : IObjectReader
     {
+        private EnumNativeObjectInfo ReadEnumeration()
+        { 
+            var enumeratedValue = _fsi.ReadString();
+            var enumeratedType = _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(OIDFactory.BuildClassOID(_fsi.ReadLong()));
+            return new EnumNativeObjectInfo(enumeratedType, enumeratedValue);
+        }
+
+
         /// <summary>
         ///   to build instances
         /// </summary>
@@ -1026,31 +1034,22 @@ namespace NDatabase.Core.Engine
             if (OdbType.IsNull(realTypeId))
                 return new NullNativeObjectInfo(realTypeId);
             if (OdbType.IsArray(realTypeId))
-                return ReadArray(position, useCache, returnObject);
+                return ReadArrayFromDatabaseFile(position, useCache, returnObject);
             if (OdbType.IsEnum(realTypeId))
-                return ReadEnumObjectInfo();
+                return ReadEnumeration();
             throw new OdbRuntimeException(NDatabaseError.NativeTypeNotSupported.AddParameter(realTypeId));
         }
 
-        /// <summary>
-        ///   Reads an enum object
-        /// </summary>
-        private EnumNativeObjectInfo ReadEnumObjectInfo()
-        {
-            var enumClassInfoId = _fsi.ReadLong();
-            var enumValue = _fsi.ReadString();
-            var enumCi =
-                _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(
-                    OIDFactory.BuildClassOID(enumClassInfoId));
+        
 
-            return new EnumNativeObjectInfo(enumCi, enumValue);
-        }
+        
+        
+ 
+       
 
-        /// <summary>
-        ///   Reads an array from the database file
-        /// </summary>
-        /// <returns> The Collection or the array @ </returns>
-        private ArrayObjectInfo ReadArray(long position, bool useCache, bool returnObjects)
+
+        
+        private ArrayObjectInfo ReadArrayFromDatabaseFile(long position, bool useCache, bool returnObjects)
         {
             var realArrayComponentClassName = _fsi.ReadString();
             var subTypeId = OdbType.GetFromName(realArrayComponentClassName);
