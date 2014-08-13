@@ -111,7 +111,7 @@ namespace NDatabase.Core.Engine
                 _introspectionCallbackForInsert = new InstrumentationCallbackForStore(_triggerManager, false);
                 _introspectionCallbackForUpdate = new InstrumentationCallbackForStore(_triggerManager, true);
             }
-            catch
+            catch(Exception exception)
             {
                 if (parameters is FileIdentification)
                     Monitor.Exit(string.Intern(Path.GetFullPath(parameters.FileName)));
@@ -440,12 +440,9 @@ namespace NDatabase.Core.Engine
                 newStorageEngine.Store(defragObject);
                 totalNbObjects++;
 
-                if (OdbConfiguration.IsLoggingEnabled())
-                {
                     if (j % 10000 == 0)
                         DLogger.Info(string.Concat("\nStorageEngine: ", totalNbObjects.ToString(), " objects saved."));
-                }
-
+                
                 j++;
             }
 
@@ -465,8 +462,7 @@ namespace NDatabase.Core.Engine
 
         private void UpdateMetaModel()
         {
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Info("StorageEngine: Automatic refactoring : updating meta model");
+            DLogger.Info("StorageEngine: Automatic refactoring : updating meta model");
 
             var metaModel = GetMetaModel();
 

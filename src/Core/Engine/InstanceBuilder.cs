@@ -94,9 +94,8 @@ namespace NDatabase.Core.Engine
             {
                 // Gets the id of this field
                 var attributeId = classInfo.GetAttributeId(fieldInfo.Name);
-                if (OdbConfiguration.IsLoggingEnabled())
-                    DLogger.Debug(string.Concat("InstanceBuilder: ", "getting field with name ", fieldInfo.Name, ", attribute id is ",
-                                                attributeId.ToString()));
+                DLogger.Debug(string.Concat("InstanceBuilder: ", "getting field with name ", fieldInfo.Name, ", attribute id is ",
+                                            attributeId.ToString()));
 
                 var abstractObjectInfo = objectInfo.GetAttributeValueFromId(attributeId);
 
@@ -126,14 +125,11 @@ namespace NDatabase.Core.Engine
                     {
                         if (abstractObjectInfo.IsDeletedObject())
                         {
-                            if (OdbConfiguration.IsLoggingEnabled())
-                            {
-                                var warning =
-                                    NDatabaseError.AttributeReferencesADeletedObject.AddParameter(
-                                        objectInfo.GetClassInfo().FullClassName).AddParameter(
-                                            objectInfo.GetOid()).AddParameter(fieldInfo.Name);
-                                DLogger.Warning("InstanceBuilder: " + warning);
-                            }
+                            var warning =
+                                NDatabaseError.AttributeReferencesADeletedObject.AddParameter(
+                                    objectInfo.GetClassInfo().FullClassName).AddParameter(
+                                        objectInfo.GetOid()).AddParameter(fieldInfo.Name);
+                            DLogger.Warning("InstanceBuilder: " + warning);
                             value = null;
                         }
                         else
@@ -143,11 +139,10 @@ namespace NDatabase.Core.Engine
                 if (value == null) 
                     continue;
 
-                if (OdbConfiguration.IsLoggingEnabled())
-                {
-                    DLogger.Debug(String.Format("InstanceBuilder: Setting field {0}({1}) to {2} / {3}", fieldInfo.Name,
-                                                fieldInfo.GetType().FullName, value, value.GetType().FullName));
-                }
+                // TODO: This was previousy wrapped in a conditional (if logging enabled) which always returned false which in turn 
+                //       masked a null reference exception thrown when value is null.
+                //DLogger.Debug(String.Format("InstanceBuilder: Setting field {0}({1}) to {2} / {3}", fieldInfo.Name,
+                //                            fieldInfo.GetType().FullName, value, value.GetType().FullName));
                 try
                 {
                     fieldInfo.SetValue(o, value);

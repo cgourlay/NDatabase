@@ -160,8 +160,7 @@ namespace NDatabase.Core.Engine
         /// <returns> The object position, if object has been marked as deleted then return StorageEngineConstant.DELETED_OBJECT_POSITION @ </returns>
         public long GetObjectPositionFromItsOid(OID oid, bool useCache, bool throwException)
         {
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Debug("ObjectReader: getObjectPositionFromItsId for oid " + oid);
+            DLogger.Debug("ObjectReader: getObjectPositionFromItsId for oid " + oid);
             // Check if oid is in cache
             var position = StorageEngineConstant.ObjectIsNotInCache;
             if (useCache)
@@ -199,40 +198,31 @@ namespace NDatabase.Core.Engine
                            ? StorageEngineConstant.ObjectDoesNotExist
                            : StorageEngineConstant.DeletedObjectPosition;
             }
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var positionAsString = objectPosition.ToString();
-                DLogger.Debug("ObjectReader: object position of object with oid " + oid + " is " + positionAsString);
-            }
+            var positionAsString = objectPosition.ToString();
+            DLogger.Debug("ObjectReader: object position of object with oid " + oid + " is " + positionAsString);
+            
             return objectPosition;
         }
 
         public long ReadOidPosition(OID oid)
         {
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Debug("ObjectReader: Start of readOidPosition for oid " + oid);
+            DLogger.Debug("ObjectReader: Start of readOidPosition for oid " + oid);
 
             var blockNumber = StorageEngineConstant.GetIdBlockNumberOfOid(oid);
             var blockPosition = GetIdBlockPositionFromNumber(blockNumber);
 
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var blockNumberAsString = blockNumber.ToString();
-                var blockPositionAsString = blockPosition.ToString();
-                DLogger.Debug(string.Format("ObjectReader: Block number of oid {0} is ", oid) + blockNumberAsString +
-                              " / block position = " + blockPositionAsString);
-            }
-
+            var blockNumberAsString = blockNumber.ToString();
+            var blockPositionAsString = blockPosition.ToString();
+            DLogger.Debug(string.Format("ObjectReader: Block number of oid {0} is ", oid) + blockNumberAsString +
+                          " / block position = " + blockPositionAsString);
+            
             var position = blockPosition + StorageEngineConstant.BlockIdOffsetForStartOfRepetition +
                            ((oid.ObjectId - 1) % StorageEngineConstant.NbIdsPerBlock) *
                            StorageEngineConstant.IdBlockRepetitionSize;
 
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var positionAsString = position.ToString();
-                DLogger.Debug(string.Format("ObjectReader: End of readOidPosition for oid {0} returning position ", oid) + positionAsString);
-            }
-
+            var positionAsString = position.ToString();
+            DLogger.Debug(string.Format("ObjectReader: End of readOidPosition for oid {0} returning position ", oid) + positionAsString);
+            
             return position;
         }
 
@@ -278,8 +268,7 @@ namespace NDatabase.Core.Engine
         /// <returns> The read class info object @ </returns>
         public ClassInfo ReadClassInfoHeader(OID classInfoOid)
         {
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Debug("FileSystemReader: Reading new Class info Header with oid " + classInfoOid);
+            DLogger.Debug("FileSystemReader: Reading new Class info Header with oid " + classInfoOid);
             var classInfoPosition = GetObjectPositionFromItsOid(classInfoOid, true, true);
             _fsi.SetReadPosition(classInfoPosition);
             var blockSize = _fsi.ReadInt();

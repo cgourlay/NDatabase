@@ -37,18 +37,17 @@ using NDatabase.Tool.Wrappers;
 
 namespace NDatabase.Core.Engine
 {
-    /// <summary>
-    ///   Manage all IO Reading
-    /// </summary>
     internal sealed class ObjectReader : IObjectReader
     {
         private EnumNativeObjectInfo ReadEnumeration()
         {
             var objectId = _fsi.ReadLong();
-            var value = _fsi.ReadString();
-            var classInfo = _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(OIDFactory.BuildClassOID(objectId));
-            return new EnumNativeObjectInfo(classInfo, value);
+            var enumeratedValue = _fsi.ReadString();
+            var enumeratedType = _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(OIDFactory.BuildClassOID(objectId));
+            return new EnumNativeObjectInfo(enumeratedType, enumeratedValue);
         }
+
+
 
 
 
@@ -122,8 +121,7 @@ namespace NDatabase.Core.Engine
             {
                 classInfo = ReadClassInfoBody(currentClassInfo);
 
-                if (OdbConfiguration.IsLoggingEnabled())
-                    DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader:  class body for " + classInfo.FullClassName);
+                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader:  class body for " + classInfo.FullClassName);
             }
 
             // No need to add it to metamodel, it is already in it.
@@ -131,11 +129,9 @@ namespace NDatabase.Core.Engine
             // Read last object of each class
             foreach (var actualClassInfo in allClasses)
             {
-                if (OdbConfiguration.IsLoggingEnabled())
-                {
-                    DLogger.Debug(string.Format("{0}ObjectReader: Reading class info last instance {1}", OdbString.DepthToSpaces(_currentDepth),
-                                                actualClassInfo.FullClassName));
-                }
+
+                DLogger.Debug(string.Format("{0}ObjectReader: Reading class info last instance {1}", OdbString.DepthToSpaces(_currentDepth),
+                                            actualClassInfo.FullClassName));
                 if (actualClassInfo.CommitedZoneInfo.HasObjects())
                 {
                     // TODO Check if must use true or false in return object
@@ -174,19 +170,16 @@ namespace NDatabase.Core.Engine
                     btree.GetRoot().SetBTree(btree);
                 }
 
-                if (OdbConfiguration.IsLoggingEnabled())
-                {
-                    var count = indexes.Count.ToString();
-                    DLogger.Debug(
-                        string.Format("{0}ObjectReader: Reading indexes for {1} : ", OdbString.DepthToSpaces(_currentDepth), actualClassInfo.FullClassName) +
-                        count + " indexes");
-                }
 
+                var count = indexes.Count.ToString();
+                DLogger.Debug(
+                    string.Format("{0}ObjectReader: Reading indexes for {1} : ", OdbString.DepthToSpaces(_currentDepth), actualClassInfo.FullClassName) +
+                    count + " indexes");
+                
                 actualClassInfo.SetIndexes(indexes);
             }
 
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Current Meta Model is :" + metaModel);
+            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Current Meta Model is :" + metaModel);
         }
 
         /// <summary>
@@ -241,8 +234,7 @@ namespace NDatabase.Core.Engine
             var tmpCache = lsession.GetTmpCache();
             // ICache tmpCache =cache;
             // We are dealing with a non native object
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info with oid " + oid);
+            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info with oid " + oid);
             // If the object is already being read, then return from the cache
             if (tmpCache.IsReadingObjectInfoWithOid(oid))
                 return tmpCache.GetObjectInfoByOid(oid);
@@ -256,16 +248,13 @@ namespace NDatabase.Core.Engine
                 classInfo =
                     _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(objectInfoHeader.GetClassInfoId());
             
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
                 var positionAsString = objectInfoHeader.GetPosition().ToString();
                 DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info of " + (classInfo == null
                                                                                             ? "?"
                                                                                             : classInfo.FullClassName) + " at " +
                               positionAsString + " with id " + oid);
                 DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Object Header is " + objectInfoHeader);
-            }
-
+            
             var objectInfo = new NonNativeObjectInfo(objectInfoHeader, classInfo);
             objectInfo.SetOid(oid);
             objectInfo.SetClassInfo(classInfo);
@@ -464,11 +453,9 @@ namespace NDatabase.Core.Engine
         /// <returns> The read class info @ </returns>
         private ClassInfo ReadClassInfoBody(ClassInfo classInfo)
         {
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var attributesDefinitionPositionAsString = classInfo.AttributesDefinitionPosition.ToString();
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
-            }
+            var attributesDefinitionPositionAsString = classInfo.AttributesDefinitionPosition.ToString();
+            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
+            
             _fsi.SetReadPosition(classInfo.AttributesDefinitionPosition);
             var blockSize = _fsi.ReadInt();
             var blockType = _fsi.ReadByte();
@@ -1010,12 +997,9 @@ namespace NDatabase.Core.Engine
         private AbstractObjectInfo ReadNativeObjectInfo(int odbDeclaredTypeId, long position, bool useCache,
                                                         bool returnObject, bool readHeader)
         {
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var positionAsString = position.ToString();
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading native object of type " +
-                              OdbType.GetNameFromId(odbDeclaredTypeId) + " at position " + positionAsString);
-            }
+            var positionAsString = position.ToString();
+            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading native object of type " +
+                          OdbType.GetNameFromId(odbDeclaredTypeId) + " at position " + positionAsString);
             // The realType is initialized with the declared type
             var realTypeId = odbDeclaredTypeId;
             if (readHeader)
@@ -1055,12 +1039,9 @@ namespace NDatabase.Core.Engine
             
             // read the size of the array
             var arraySize = _fsi.ReadInt();
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var size = arraySize.ToString();
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: reading an array of " + realArrayComponentClassName + " with " +
-                              size + " elements");
-            }
+            var size = arraySize.ToString();
+            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: reading an array of " + realArrayComponentClassName + " with " +
+                          size + " elements");
             
             var array = new object[arraySize];
             // build a n array to store all element positions

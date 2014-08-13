@@ -79,8 +79,7 @@ namespace NDatabase.Core.BTree
             // else load from odb
             try
             {
-                if (OdbConfiguration.IsLoggingEnabled())
-                    DLogger.Debug(string.Format("LazyOdbBtreePersister: Loading node with id {0}", oid));
+                DLogger.Debug(string.Format("LazyOdbBtreePersister: Loading node with id {0}", oid));
 
                 if (oid == null)
                     throw new OdbRuntimeException(BTreeError.InvalidIdForBtree.AddParameter("oid"));
@@ -119,8 +118,7 @@ namespace NDatabase.Core.BTree
 
                     oid = _engine.Store(oid, node);
 
-                    if (OdbConfiguration.IsLoggingEnabled())
-                        DLogger.Debug(string.Format("LazyOdbBtreePersister: Saved node id {0}", oid));
+                    DLogger.Debug(string.Format("LazyOdbBtreePersister: Saved node id {0}", oid));
 
                     // + " : " +
                     // node.toString());
@@ -154,8 +152,7 @@ namespace NDatabase.Core.BTree
 
             try
             {
-                if (OdbConfiguration.IsLoggingEnabled())
-                    DLogger.Debug(string.Format("LazyOdbBtreePersister: Loading btree with id {0}", oid));
+                DLogger.Debug(string.Format("LazyOdbBtreePersister: Loading btree with id {0}", oid));
 
                 if (oid == StorageEngineConstant.NullObjectId)
                     throw new OdbRuntimeException(
@@ -189,8 +186,7 @@ namespace NDatabase.Core.BTree
                     treeToSave.SetId(oid);
                     oid = _engine.Store(oid, treeToSave);
 
-                    if (OdbConfiguration.IsLoggingEnabled())
-                        DLogger.Debug(string.Format("LazyOdbBtreePersister: Saved btree {0} with id {1} and  root {2}", treeToSave.GetId(), oid,
+                    DLogger.Debug(string.Format("LazyOdbBtreePersister: Saved btree {0} with id {1} and  root {2}", treeToSave.GetId(), oid,
                                                     treeToSave.GetRoot()));
 
                     if (_tree == null)
@@ -260,13 +256,10 @@ namespace NDatabase.Core.BTree
         {
             _nbPersist++;
 
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var count = _modifiedObjectOids.Count.ToString();
-                DLogger.Debug(string.Concat("LazyOdbBtreePersister: ", "persist ", _nbPersist.ToString(), "  : Saving " + count + " objects - ",
-                                            GetHashCode().ToString()));
-            }
-
+            var count = _modifiedObjectOids.Count.ToString();
+            DLogger.Debug(string.Concat("LazyOdbBtreePersister: ", "persist ", _nbPersist.ToString(), "  : Saving " + count + " objects - ",
+                                        GetHashCode().ToString()));
+            
             var nbCommited = 0;
             var i = 0;
             var size = _modifiedObjectOids.Count;
@@ -296,15 +289,13 @@ namespace NDatabase.Core.BTree
                         BTreeError.InternalError.AddParameter("Error while storing object with oid " + oid), e);
                 }
 
-                if (OdbConfiguration.IsLoggingEnabled())
-                    DLogger.Debug(string.Concat("LazyOdbBtreePersister: ", "Committing oid " + oid, " | ", i.ToString(), "/", size.ToString(),
-                                                " | ", (t1 - t0).ToString(), " ms"));
+                DLogger.Debug(string.Concat("LazyOdbBtreePersister: ", "Committing oid " + oid, " | ", i.ToString(), "/", size.ToString(),
+                                            " | ", (t1 - t0).ToString(), " ms"));
 
                 i++;
             }
 
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Debug(string.Concat("LazyOdbBtreePersister: ", nbCommited.ToString(), " commits / ", size.ToString()));
+            DLogger.Debug(string.Concat("LazyOdbBtreePersister: ", nbCommited.ToString(), " commits / ", size.ToString()));
         }
 
         private void ClearModified()

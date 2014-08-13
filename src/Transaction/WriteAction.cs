@@ -101,8 +101,7 @@ namespace NDatabase.Transaction
                 var bytes = fsi.ReadBytes(size);
                 var writeAction = new WriteAction(position, bytes);
 
-                if (OdbConfiguration.IsLoggingEnabled())
-                    DLogger.Debug(string.Format("Transaction WriteAction: Loading Write Action at {0} => {1}", fsi.GetPosition(), writeAction));
+                DLogger.Debug(string.Format("Transaction WriteAction: Loading Write Action at {0} => {1}", fsi.GetPosition(), writeAction));
 
                 return writeAction;
             }

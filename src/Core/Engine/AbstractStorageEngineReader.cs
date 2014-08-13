@@ -88,14 +88,12 @@ namespace NDatabase.Core.Engine
 
             var classInfoIndex = GetClassInfoIndex(className, indexName, classInfo);
 
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Info(string.Format("StorageEngine: Deleting index {0} on class {1}", indexName, className));
+            DLogger.Info(string.Format("StorageEngine: Deleting index {0} on class {1}", indexName, className));
 
             Delete(classInfoIndex);
             classInfo.RemoveIndex(classInfoIndex);
 
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Info(string.Format("StorageEngine: Index {0} deleted", indexName));
+            DLogger.Info(string.Format("StorageEngine: Index {0} deleted", indexName));
         }
 
         /// <summary>
@@ -103,8 +101,7 @@ namespace NDatabase.Core.Engine
         /// </summary>
         public void RebuildIndex(string className, string indexName)
         {
-            if (OdbConfiguration.IsLoggingEnabled())
-                DLogger.Info(string.Format("StorageEngine: Rebuilding index {0} on class {1}", indexName, className));
+            DLogger.Info(string.Format("StorageEngine: Rebuilding index {0} on class {1}", indexName, className));
 
             var classInfo = GetMetaModel().GetClassInfo(className, true);
             var classInfoIndex = GetClassInfoIndex(className, indexName, classInfo);
@@ -143,8 +140,7 @@ namespace NDatabase.Core.Engine
                 return;
             }
 
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
+           
                 var numberOfObjectsAsString = classInfo.NumberOfObjects.ToString();
                 DLogger.Info(
                     string.Format(
@@ -153,18 +149,14 @@ namespace NDatabase.Core.Engine
 
                 DLogger.Info(string.Format("StorageEngine: {0} : loading {1} objects from database", indexName,
                                            numberOfObjectsAsString));
-            }
-
+           
             // We must load all objects and insert them in the index!
             var criteriaQuery = new SodaQuery(classInfo.UnderlyingType);
             var objects = GetObjectInfos(criteriaQuery);
 
-            if (OdbConfiguration.IsLoggingEnabled())
-            {
-                var numberOfObjectsAsString = classInfo.NumberOfObjects.ToString();
+                 numberOfObjectsAsString = classInfo.NumberOfObjects.ToString();
                 DLogger.Info(string.Format("StorageEngine: {0} : {1} objects loaded", indexName, numberOfObjectsAsString));
-            }
-
+            
             while (objects.HasNext())
             {
                 var nnoi = (NonNativeObjectInfo) objects.Next();
