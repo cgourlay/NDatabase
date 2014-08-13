@@ -1,23 +1,23 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using System;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 using System.Collections.Generic;
 using System.Linq;
 using NDatabase.Api;
@@ -43,11 +43,13 @@ namespace NDatabase.Core.Engine
     internal sealed class ObjectReader : IObjectReader
     {
         private EnumNativeObjectInfo ReadEnumeration()
-        { 
-            var enumeratedValue = _fsi.ReadString();
-            var enumeratedType = _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(OIDFactory.BuildClassOID(_fsi.ReadLong()));
-            return new EnumNativeObjectInfo(enumeratedType, enumeratedValue);
+        {
+            var objectId = _fsi.ReadLong();
+            var value = _fsi.ReadString();
+            var classInfo = _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(OIDFactory.BuildClassOID(objectId));
+            return new EnumNativeObjectInfo(classInfo, value);
         }
+
 
 
         /// <summary>
@@ -102,13 +104,10 @@ namespace NDatabase.Core.Engine
             for (var i = 0; i < nbClasses; i++)
             {
                 classInfo = _fileSystemReader.ReadClassInfoHeader(classOID);
-                if (OdbConfiguration.IsLoggingEnabled())
-                {
                     DLogger.Debug(string.Format(
                         "{0}ObjectReader: Reading class header for {1} - oid = {2} prevOid={3} - nextOid={4}", OdbString.DepthToSpaces(_currentDepth),
                         classInfo.FullClassName, classOID, classInfo.PreviousClassOID,
                         classInfo.NextClassOID));
-                }
                 metaModel.AddClass(classInfo);
                 classOID = classInfo.NextClassOID;
             }
