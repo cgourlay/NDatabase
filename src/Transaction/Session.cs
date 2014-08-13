@@ -1,6 +1,7 @@
 using System;
 using NDatabase.Cache;
 using NDatabase.Core;
+using NDatabase.Core.Engine;
 using NDatabase.Core.Session;
 using NDatabase.Exceptions;
 using NDatabase.Meta;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using NDatabase.Api;
 using NDatabase.Container;
+using NDatabase.Core.Engine;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
 using System.Linq;

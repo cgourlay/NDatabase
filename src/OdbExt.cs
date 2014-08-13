@@ -1,5 +1,6 @@
 using NDatabase.Api;
 using NDatabase.Core;
+using NDatabase.Core.Engine;
 using NDatabase.Exceptions;
 using NDatabase.Oid;
 

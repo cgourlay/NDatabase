@@ -9,7 +9,7 @@ using NDatabase.Storage;
 using NDatabase.Tool.Wrappers;
 using NDatabase.Triggers;
 
-namespace NDatabase.Core
+namespace NDatabase.Core.Engine
 {
     /// <summary>
     ///   The interface of all that a StorageEngine (Main concept in ODB) must do.

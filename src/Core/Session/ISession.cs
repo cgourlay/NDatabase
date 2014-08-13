@@ -1,5 +1,6 @@
 using System;
 using NDatabase.Cache;
+using NDatabase.Core.Engine;
 using NDatabase.Meta;
 
 namespace NDatabase.Core.Session

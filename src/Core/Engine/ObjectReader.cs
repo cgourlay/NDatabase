@@ -39,6 +39,8 @@ namespace NDatabase.Core.Engine
 {
     internal sealed class ObjectReader : IObjectReader
     {
+        private IStorageEngine _storageEngine;
+
         private EnumNativeObjectInfo ReadEnumeration()
         {
             var objectId = _fsi.ReadLong();
@@ -63,7 +65,7 @@ namespace NDatabase.Core.Engine
         /// </summary>
         private int _currentDepth;
 
-        private IStorageEngine _storageEngine;
+        
 
         /// <summary>
         ///   The fsi is the object that knows how to write and read native types

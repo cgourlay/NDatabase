@@ -179,7 +179,7 @@
     <Compile Include="IO\FileIdentification.cs" />
     <Compile Include="IO\IMultiBuffer.cs" />
     <Compile Include="Api\IRefactorManager.cs" />
-    <Compile Include="Core\IStorageEngine.cs" />
+    <Compile Include="Core\Engine\IStorageEngine.cs" />
     <Compile Include="Exceptions\NDatabaseError.cs" />
     <Compile Include="OIDFactory.cs" />
     <Compile Include="Api\OrderByConstants.cs" />

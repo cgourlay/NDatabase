@@ -1,5 +1,6 @@
 using NDatabase;
 using NDatabase.Core;
+using NDatabase.Core.Engine;
 using NUnit.Framework;
 
 namespace Test.NDatabase.Odb.Test.Other

@@ -1,4 +1,5 @@
 using NDatabase.Api;
+using NDatabase.Core.Engine;
 using NDatabase.Core.Query.Execution;
 using NDatabase.Core.Query.List;
 using NDatabase.Meta;

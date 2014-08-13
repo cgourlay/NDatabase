@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NDatabase.Api;
 using NDatabase.Btree;
+using NDatabase.Core.Engine;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Services;

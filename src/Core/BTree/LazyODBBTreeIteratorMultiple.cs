@@ -1,6 +1,7 @@
 using System;
 using NDatabase.Api;
 using NDatabase.Btree;
+using NDatabase.Core.Engine;
 using NDatabase.Exceptions;
 
 namespace NDatabase.Core.BTree

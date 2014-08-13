@@ -1,3 +1,4 @@
+using NDatabase.Core.Engine;
 using NDatabase.Meta;
 
 namespace NDatabase.Core.Query.Execution

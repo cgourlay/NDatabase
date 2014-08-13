@@ -1,4 +1,5 @@
 using NDatabase.Core;
+using NDatabase.Core.Engine;
 using NDatabase.Core.Session;
 using NDatabase.Tool.Wrappers;
 

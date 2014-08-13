@@ -1,4 +1,5 @@
 using NDatabase.Api.Query;
+using NDatabase.Core.Engine;
 using NDatabase.Core.Query.Criteria;
 using NDatabase.Core.Query.Execution;
 using NDatabase.Core.Query.Values;
