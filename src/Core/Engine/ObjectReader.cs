@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using System.Linq;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 using NDatabase.Api;
 using NDatabase.Api.Query;
 using NDatabase.Btree;
@@ -40,12 +40,13 @@ namespace NDatabase.Core.Engine
 {
     internal sealed class ObjectReader : IObjectReader
     {
+        private readonly IFileSystemInterface _fileSystemInterface;
         private IStorageEngine _storageEngine;
 
         private EnumNativeObjectInfo ReadEnumeration()
         {
-            var objectId = _fsi.ReadLong();
-            var enumeratedValue = _fsi.ReadString();
+            var objectId = _fileSystemInterface.ReadLong();
+            var enumeratedValue = _fileSystemInterface.ReadString();
             var enumeratedType = GetClassInfoFromObjectId(objectId);
             return new EnumNativeObjectInfo(enumeratedType, enumeratedValue);
         }
@@ -97,10 +98,7 @@ namespace NDatabase.Core.Engine
 
 
 
-        /// <summary>
-        ///   The fsi is the object that knows how to write and read native types
-        /// </summary>
-        private readonly IFileSystemInterface _fsi;
+        
 
         /// <summary>
         ///   The constructor
@@ -109,7 +107,7 @@ namespace NDatabase.Core.Engine
         {
             _storageEngine = engine;
             _fileSystemReader = new FileSystemReader(_storageEngine);
-            _fsi = engine.GetObjectWriter().FileSystemProcessor.FileSystemInterface;
+            _fileSystemInterface = engine.GetObjectWriter().FileSystemProcessor.FileSystemInterface;
 
             _instanceBuilder = BuildInstanceBuilder();
         }
@@ -129,7 +127,7 @@ namespace NDatabase.Core.Engine
                 return;
 
             // Set the cursor Where We Can Find The First Class info OID
-            _fsi.SetReadPosition(StorageEngineConstant.DatabaseHeaderFirstClassOid);
+            _fileSystemInterface.SetReadPosition(StorageEngineConstant.DatabaseHeaderFirstClassOid);
             var classOID = OIDFactory.BuildClassOID(_fileSystemReader.ReadFirstClassOid());
             // read headers
             for (var i = 0; i < nbClasses; i++)
@@ -380,8 +378,8 @@ namespace NDatabase.Core.Engine
         public OID GetNextObjectOID(OID oid)
         {
             var position = _storageEngine.GetObjectWriter().GetIdManager().GetObjectPositionWithOid(oid, true);
-            _fsi.SetReadPosition(position + StorageEngineConstant.ObjectOffsetNextObjectOid);
-            return OIDFactory.BuildObjectOID(_fsi.ReadLong());
+            _fileSystemInterface.SetReadPosition(position + StorageEngineConstant.ObjectOffsetNextObjectOid);
+            return OIDFactory.BuildObjectOID(_fileSystemInterface.ReadLong());
         }
 
         public long ReadOidPosition(OID oid)
@@ -486,9 +484,9 @@ namespace NDatabase.Core.Engine
             var attributesDefinitionPositionAsString = classInfo.AttributesDefinitionPosition.ToString();
             DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
 
-            _fsi.SetReadPosition(classInfo.AttributesDefinitionPosition);
-            var blockSize = _fsi.ReadInt();
-            var blockType = _fsi.ReadByte();
+            _fileSystemInterface.SetReadPosition(classInfo.AttributesDefinitionPosition);
+            var blockSize = _fileSystemInterface.ReadInt();
+            var blockType = _fileSystemInterface.ReadByte();
             if (!BlockTypes.IsClassBody(blockType))
             {
                 throw new OdbRuntimeException(
@@ -496,13 +494,13 @@ namespace NDatabase.Core.Engine
                         classInfo.AttributesDefinitionPosition));
             }
             // TODO This should be a short instead of long
-            var nbAttributes = _fsi.ReadLong();
+            var nbAttributes = _fileSystemInterface.ReadLong();
             IOdbList<ClassAttributeInfo> attributes = new OdbList<ClassAttributeInfo>((int)nbAttributes);
             for (var i = 0; i < nbAttributes; i++)
                 attributes.Add(ReadClassAttributeInfo());
             classInfo.Attributes = attributes;
             // FIXME Convert blocksize to long ??
-            var realBlockSize = (int)(_fsi.GetPosition() - classInfo.AttributesDefinitionPosition);
+            var realBlockSize = (int)(_fileSystemInterface.GetPosition() - classInfo.AttributesDefinitionPosition);
             if (blockSize != realBlockSize)
             {
                 throw new OdbRuntimeException(
@@ -519,21 +517,21 @@ namespace NDatabase.Core.Engine
         private ClassAttributeInfo ReadClassAttributeInfo()
         {
             var cai = new ClassAttributeInfo();
-            var attributeId = _fsi.ReadInt();
-            var isNative = _fsi.ReadBoolean();
+            var attributeId = _fileSystemInterface.ReadInt();
+            var isNative = _fileSystemInterface.ReadBoolean();
             if (isNative)
             {
-                var attributeTypeId = _fsi.ReadInt();
+                var attributeTypeId = _fileSystemInterface.ReadInt();
                 var type = OdbType.GetFromId(attributeTypeId);
                 // if it is an array, read also the subtype
                 if (type.IsArray())
                 {
                     type = type.Copy();
-                    var subTypeId = _fsi.ReadInt();
+                    var subTypeId = _fileSystemInterface.ReadInt();
                     var subType = OdbType.GetFromId(subTypeId);
                     if (subType.IsNonNative())
                     {
-                        var fullClassName = GetClassInfoFromObjectId(OIDFactory.BuildClassOID(_fsi.ReadLong())).FullClassName;
+                        var fullClassName = GetClassInfoFromObjectId(OIDFactory.BuildClassOID(_fileSystemInterface.ReadLong())).FullClassName;
 
                         subType = subType.Copy(fullClassName);
                     }
@@ -543,7 +541,7 @@ namespace NDatabase.Core.Engine
                 // For enum, we get the class info id of the enum class
                 if (type.IsEnum())
                 {
-                    var classInfoId = _fsi.ReadLong();
+                    var classInfoId = _fileSystemInterface.ReadLong();
                     cai.SetFullClassName(GetClassInfoFromObjectId(OIDFactory.BuildClassOID(classInfoId)).FullClassName);
                     // For enum, we need to create a new type just to set the real enum class name
                     type = type.Copy(cai.GetFullClassname());
@@ -556,13 +554,13 @@ namespace NDatabase.Core.Engine
             {
                 // This is a non native, gets the id of the type and gets it from
                 // meta-model
-                var typeId = _fsi.ReadLong();
+                var typeId = _fileSystemInterface.ReadLong();
                 cai.SetFullClassName(GetClassInfoFromObjectId(OIDFactory.BuildClassOID(typeId)).FullClassName);
                 cai.SetClassInfo(GetClassInfoFromName(cai.GetFullClassname()));
                 cai.SetAttributeType(OdbType.GetFromName(cai.GetFullClassname()));
             }
-            cai.SetName(_fsi.ReadString());
-            cai.SetIndex(_fsi.ReadBoolean());
+            cai.SetName(_fileSystemInterface.ReadString());
+            cai.SetIndex(_fileSystemInterface.ReadBoolean());
             cai.SetId(attributeId);
             return cai;
         }
@@ -601,10 +599,10 @@ namespace NDatabase.Core.Engine
 
         private ObjectInfoHeader ReadObjectInfoHeaderFromPosition(OID oid, long position, bool useCache)
         {
-            if (position > _fsi.GetLength())
+            if (position > _fileSystemInterface.GetLength())
             {
                 throw new CorruptedDatabaseException(
-                    NDatabaseError.InstancePositionOutOfFile.AddParameter(position).AddParameter(_fsi.GetLength()));
+                    NDatabaseError.InstancePositionOutOfFile.AddParameter(position).AddParameter(_fileSystemInterface.GetLength()));
             }
             if (position < 0)
             {
@@ -612,8 +610,8 @@ namespace NDatabase.Core.Engine
                     NDatabaseError.InstancePositionIsNegative.AddParameter(position).AddParameter(oid.ToString()));
             }
             // adds an integer because, we pull the block size
-            _fsi.SetReadPosition(position + OdbType.Integer.Size);
-            var objectBlockType = _fsi.ReadByte();
+            _fileSystemInterface.SetReadPosition(position + OdbType.Integer.Size);
+            var objectBlockType = _fileSystemInterface.ReadByte();
 
             if (BlockTypes.IsNonNative(objectBlockType))
             {
@@ -621,7 +619,7 @@ namespace NDatabase.Core.Engine
                 // OID + ClassOid + PrevOid + NextOid + createDate + update Date + objectVersion + nbAttributes + RefCoutner + IsRoot
                 // Long + Long +    Long    +  Long    + Long       + Long       +   int         + Int          + long       + byte
                 var tsize = 7 * OdbType.SizeOfLong + 2 * OdbType.SizeOfInt + OdbType.SizeOfByte;
-                var abytes = _fsi.ReadBytes(tsize);
+                var abytes = _fileSystemInterface.ReadBytes(tsize);
                 var readOid = ByteArrayConverter.DecodeOid(abytes, 0);
                 // oid can be -1 (if was not set),in this case there is no way to
                 // check
@@ -651,7 +649,7 @@ namespace NDatabase.Core.Engine
                 var attributeIds = new int[nbAttributesRead];
                 var atsize = OdbType.SizeOfInt + OdbType.SizeOfLong;
                 // Reads the bytes and then convert to values
-                var bytes = _fsi.ReadBytes(nbAttributesRead * atsize);
+                var bytes = _fileSystemInterface.ReadBytes(nbAttributesRead * atsize);
                 for (var i = 0; i < nbAttributesRead; i++)
                 {
                     attributeIds[i] = ByteArrayConverter.ByteArrayToInt(bytes, i * atsize);
@@ -704,11 +702,11 @@ namespace NDatabase.Core.Engine
             try
             {
                 // Protection against bad parameter value
-                if (objectPosition > _fsi.GetLength())
+                if (objectPosition > _fileSystemInterface.GetLength())
                 {
                     throw new OdbRuntimeException(
                         NDatabaseError.InstancePositionOutOfFile.AddParameter(objectPosition).AddParameter(
-                            _fsi.GetLength()));
+                            _fileSystemInterface.GetLength()));
                 }
                 if (objectPosition == StorageEngineConstant.DeletedObjectPosition ||
                     objectPosition == StorageEngineConstant.NullObjectPosition)
@@ -719,12 +717,12 @@ namespace NDatabase.Core.Engine
 
                 // Read block size and block type
                 // block type is used to decide what to do
-                _fsi.SetReadPosition(objectPosition);
+                _fileSystemInterface.SetReadPosition(objectPosition);
                 // Reads the block size
                 //TODO:  we are reading blockSize, but not using them, is that needed?
-                _fsi.ReadInt();
+                _fileSystemInterface.ReadInt();
                 // And the block type
-                var objectBlockType = _fsi.ReadByte();
+                var objectBlockType = _fileSystemInterface.ReadByte();
                 // Null objects
                 if (BlockTypes.IsNullNonNativeObject(objectBlockType))
                     return new NonNativeNullObjectInfo(classInfo);
@@ -742,9 +740,9 @@ namespace NDatabase.Core.Engine
                 if (BlockTypes.IsNative(objectBlockType))
                 {
                     // Reads the odb type id of the native objects
-                    var odbTypeId = _fsi.ReadInt();
+                    var odbTypeId = _fileSystemInterface.ReadInt();
                     // Reads a boolean to know if object is null
-                    var isNull = _fsi.ReadBoolean(); // Native object is null ?
+                    var isNull = _fileSystemInterface.ReadBoolean(); // Native object is null ?
 
                     // last parameter is false=> no need to read native object
                     // header, it has been done
@@ -757,7 +755,7 @@ namespace NDatabase.Core.Engine
                     throw new OdbRuntimeException(NDatabaseError.ObjectReaderDirectCall);
 
                 throw new OdbRuntimeException(
-                    NDatabaseError.UnknownBlockType.AddParameter(objectBlockType).AddParameter(_fsi.GetPosition() - 1));
+                    NDatabaseError.UnknownBlockType.AddParameter(objectBlockType).AddParameter(_fileSystemInterface.GetPosition() - 1));
             }
             finally
             {
@@ -782,22 +780,22 @@ namespace NDatabase.Core.Engine
             // The resulting map
             var map = new AttributeValuesMap();
             // Protection against bad parameter value
-            if (position > _fsi.GetLength())
+            if (position > _fileSystemInterface.GetLength())
             {
                 throw new OdbRuntimeException(
-                    NDatabaseError.InstancePositionOutOfFile.AddParameter(position).AddParameter(_fsi.GetLength()));
+                    NDatabaseError.InstancePositionOutOfFile.AddParameter(position).AddParameter(_fileSystemInterface.GetLength()));
             }
             var cache = GetCache();
             // If object is already being read, simply return its cache - to avoid
             // stackOverflow for cyclic references
             // FIXME check this : should we use cache?
             // Go to the object position
-            _fsi.SetReadPosition(position);
+            _fileSystemInterface.SetReadPosition(position);
             // Read the block size of the object
             //TODO:  we are reading blockSize, but not using them, is that needed?
-            _fsi.ReadInt();
+            _fileSystemInterface.ReadInt();
             // Read the block type of the object
-            var blockType = _fsi.ReadByte();
+            var blockType = _fileSystemInterface.ReadByte();
             if (BlockTypes.IsNull(blockType) || BlockTypes.IsDeletedObject(blockType))
                 return map;
             // Checks if what we are reading is only a pointer to the real block, if
@@ -910,7 +908,7 @@ namespace NDatabase.Core.Engine
                             // TODO is this correct?
                             continue;
                         }
-                        _fsi.SetReadPosition(attributePosition);
+                        _fileSystemInterface.SetReadPosition(attributePosition);
                         object @object;
                         if (cai.IsNative())
                         {
@@ -995,7 +993,7 @@ namespace NDatabase.Core.Engine
             var nah = new NativeAttributeHeader();
             var size = OdbType.Integer.Size + OdbType.Byte.Size + OdbType.Integer.Size +
                        OdbType.Boolean.Size;
-            var bytes = _fsi.ReadBytes(size);
+            var bytes = _fileSystemInterface.ReadBytes(size);
             //TODO: block size and type not used
             ByteArrayConverter.ByteArrayToInt(bytes);
 
@@ -1056,11 +1054,11 @@ namespace NDatabase.Core.Engine
 
         private ArrayObjectInfo ReadArrayFromDatabaseFile(long position, bool useCache, bool returnObjects)
         {
-            var realArrayComponentClassName = _fsi.ReadString();
+            var realArrayComponentClassName = _fileSystemInterface.ReadString();
             var subTypeId = OdbType.GetFromName(realArrayComponentClassName);
 
             // read the size of the array
-            var arraySize = _fsi.ReadInt();
+            var arraySize = _fileSystemInterface.ReadInt();
             var size = arraySize.ToString();
             DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: reading an array of " + realArrayComponentClassName + " with " +
                           size + " elements");
@@ -1069,7 +1067,7 @@ namespace NDatabase.Core.Engine
             // build a n array to store all element positions
             var objectIdentifications = new long[arraySize];
             for (var i = 0; i < arraySize; i++)
-                objectIdentifications[i] = _fsi.ReadLong();
+                objectIdentifications[i] = _fileSystemInterface.ReadLong();
             for (var i = 0; i < arraySize; i++)
             {
                 try

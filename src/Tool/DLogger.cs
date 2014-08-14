@@ -2,9 +2,6 @@ using System.Collections.Generic;
 
 namespace NDatabase.Tool
 {
-    /// <summary>
-    ///   Simple logging class
-    /// </summary>
     internal static class DLogger
     {
         private static readonly IList<ILogger> Loggers = new List<ILogger>();
@@ -18,19 +15,22 @@ namespace NDatabase.Tool
         {
             foreach (var logger in Loggers)
             {
-                logger.Warning(@object == null
-                                      ? "null"
-                                      : @object.ToString());
+                logger.Warning(MessageToLog(@object));
             }
+        }
+
+        private static string MessageToLog(object @object)
+        {
+            return @object == null
+                ? "null"
+                : @object.ToString();
         }
 
         internal static void Debug(object @object)
         {
             foreach (var logger in Loggers)
             {
-                logger.Debug(@object == null
-                                      ? "null"
-                                      : @object.ToString());
+                logger.Debug(MessageToLog(@object));
             }
         }
 
@@ -38,9 +38,7 @@ namespace NDatabase.Tool
         {
             foreach (var logger in Loggers)
             {
-                logger.Info(@object == null
-                                      ? "null"
-                                      : @object.ToString());
+                logger.Info(MessageToLog(@object));
             }
         }
 
@@ -48,9 +46,7 @@ namespace NDatabase.Tool
         {
             foreach (var logger in Loggers)
             {
-                logger.Error(@object == null
-                                      ? "null"
-                                      : @object.ToString());
+                logger.Error(MessageToLog(@object));
             }
         }
     }
