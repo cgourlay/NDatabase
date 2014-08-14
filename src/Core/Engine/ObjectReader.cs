@@ -41,7 +41,56 @@ namespace NDatabase.Core.Engine
     internal sealed class ObjectReader : IObjectReader
     {
         private readonly IFileSystemInterface _fileSystemInterface;
+        private readonly IFileSystemReader _fileSystemReader;
         private IStorageEngine _storageEngine;
+
+        private ArrayObjectInfo ReadArrayFromDatabaseFile(long position, bool useCache, bool returnObjects)
+        {
+            var realArrayComponentClassName = _fileSystemInterface.ReadString();
+            var subTypeId = OdbType.GetFromName(realArrayComponentClassName);
+
+            // read the size of the array
+            var arraySize = _fileSystemInterface.ReadInt();
+            var size = arraySize.ToString();
+            DLogger.Debug(string.Format("{0}ObjectReader: reading an array of {1} with {2} elements.", OdbString.DepthToSpaces(_currentDepth), realArrayComponentClassName, size));
+
+            var array = new object[arraySize];
+            // build a n array to store all element positions
+            var objectIdentifications = new long[arraySize];
+            for (var i = 0; i < arraySize; i++)
+                objectIdentifications[i] = _fileSystemInterface.ReadLong();
+            for (var i = 0; i < arraySize; i++)
+            {
+                try
+                {
+                    if (objectIdentifications[i] != StorageEngineConstant.NullObjectIdId)
+                    {
+                        object o = ReadObjectInfo(objectIdentifications[i], useCache, returnObjects);
+                        if (!(o is NonNativeDeletedObjectInfo))
+                        {
+                            array.SetValue(o, i);
+                        }
+                    }
+                    else
+                    {
+                        array.SetValue(NullNativeObjectInfo.GetInstance(), i);
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new OdbRuntimeException(NDatabaseError.InternalError.AddParameter(string.Format("in ObjectReader.readArray - at position {0}", position)), e);
+                }
+            }
+            var aoi = new ArrayObjectInfo(array);
+            aoi.SetRealArrayComponentClassName(realArrayComponentClassName);
+            aoi.SetComponentTypeId(subTypeId.Id);
+            return aoi;
+        }
+
+        private AtomicNativeObjectInfo ReadAtomicNativeObjectInfo(int objectDatabaseTypeId)
+        {
+            return new AtomicNativeObjectInfo(_fileSystemReader.ReadAtomicNativeObjectInfoAsObject(objectDatabaseTypeId), objectDatabaseTypeId);
+        }
 
         private EnumNativeObjectInfo ReadEnumeration()
         {
@@ -89,7 +138,7 @@ namespace NDatabase.Core.Engine
         /// </summary>
         private readonly IInstanceBuilder _instanceBuilder;
 
-        private readonly IFileSystemReader _fileSystemReader;
+        
 
         /// <summary>
         ///   A local variable to monitor object recursion
@@ -362,14 +411,7 @@ namespace NDatabase.Core.Engine
 
 
 
-        /// <summary>
-        ///   Reads an atomic object
-        /// </summary>
-        private AtomicNativeObjectInfo ReadAtomicNativeObjectInfo(int odbTypeId)
-        {
-            var @object = _fileSystemReader.ReadAtomicNativeObjectInfoAsObject(odbTypeId);
-            return new AtomicNativeObjectInfo(@object, odbTypeId);
-        }
+        
 
         /// <summary>
         ///   Gets the next object oid of the object with the specific oid
@@ -1032,14 +1074,18 @@ namespace NDatabase.Core.Engine
                     return new NullNativeObjectInfo(odbDeclaredTypeId);
                 realTypeId = nah.GetOdbTypeId();
             }
-            if (OdbType.IsAtomicNative(realTypeId))
-                return ReadAtomicNativeObjectInfo(realTypeId);
-            if (OdbType.IsNull(realTypeId))
-                return new NullNativeObjectInfo(realTypeId);
-            if (OdbType.IsArray(realTypeId))
-                return ReadArrayFromDatabaseFile(position, useCache, returnObject);
-            if (OdbType.IsEnum(realTypeId))
-                return ReadEnumeration();
+            
+            if (OdbType.IsNull(realTypeId)) { return new NullNativeObjectInfo(realTypeId); }
+            
+
+
+
+
+            if (OdbType.IsAtomicNative(realTypeId)) { return ReadAtomicNativeObjectInfo(realTypeId); }
+            if (OdbType.IsArray(realTypeId)) { return ReadArrayFromDatabaseFile(position, useCache, returnObject); }
+            if (OdbType.IsEnum(realTypeId)) { return ReadEnumeration(); }
+
+
             throw new OdbRuntimeException(NDatabaseError.NativeTypeNotSupported.AddParameter(realTypeId));
         }
 
@@ -1052,50 +1098,6 @@ namespace NDatabase.Core.Engine
 
 
 
-        private ArrayObjectInfo ReadArrayFromDatabaseFile(long position, bool useCache, bool returnObjects)
-        {
-            var realArrayComponentClassName = _fileSystemInterface.ReadString();
-            var subTypeId = OdbType.GetFromName(realArrayComponentClassName);
-
-            // read the size of the array
-            var arraySize = _fileSystemInterface.ReadInt();
-            var size = arraySize.ToString();
-            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: reading an array of " + realArrayComponentClassName + " with " +
-                          size + " elements");
-
-            var array = new object[arraySize];
-            // build a n array to store all element positions
-            var objectIdentifications = new long[arraySize];
-            for (var i = 0; i < arraySize; i++)
-                objectIdentifications[i] = _fileSystemInterface.ReadLong();
-            for (var i = 0; i < arraySize; i++)
-            {
-                try
-                {
-                    if (objectIdentifications[i] != StorageEngineConstant.NullObjectIdId)
-                    {
-                        object o = ReadObjectInfo(objectIdentifications[i], useCache, returnObjects);
-                        if (!(o is NonNativeDeletedObjectInfo))
-                        {
-                            array.SetValue(o, i);
-                        }
-                    }
-                    else
-                    {
-                        array.SetValue(NullNativeObjectInfo.GetInstance(), i);
-                    }
-                }
-                catch (Exception e)
-                {
-                    var positionAsString = position.ToString();
-                    throw new OdbRuntimeException(
-                        NDatabaseError.InternalError.AddParameter("in ObjectReader.readArray - at position " + positionAsString), e);
-                }
-            }
-            var aoi = new ArrayObjectInfo(array);
-            aoi.SetRealArrayComponentClassName(realArrayComponentClassName);
-            aoi.SetComponentTypeId(subTypeId.Id);
-            return aoi;
-        }
+        
     }
 }
