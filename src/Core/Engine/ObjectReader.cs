@@ -1,24 +1,24 @@
 using System;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using System.Collections.Generic;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 using System.Linq;
 using NDatabase.Api;
 using NDatabase.Api.Query;
@@ -29,6 +29,7 @@ using NDatabase.Core.BTree;
 using NDatabase.Core.Query;
 using NDatabase.Core.Query.Criteria;
 using NDatabase.Core.Query.Values;
+using NDatabase.Core.Session;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Storage;
@@ -45,10 +46,39 @@ namespace NDatabase.Core.Engine
         {
             var objectId = _fsi.ReadLong();
             var enumeratedValue = _fsi.ReadString();
-            var enumeratedType = _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(OIDFactory.BuildClassOID(objectId));
+            var enumeratedType = GetClassInfoFromObjectId(objectId);
             return new EnumNativeObjectInfo(enumeratedType, enumeratedValue);
         }
 
+        private ISession GetSession()
+        {
+            return _storageEngine.GetSession();
+        }
+
+        private IOdbCache GetCache()
+        {
+            return GetSession().GetCache();
+        }
+
+        private ClassInfo GetClassInfoFromObjectId(long objectId)
+        {
+            return GetClassInfoFromObjectId(OIDFactory.BuildClassOID(objectId));
+        }
+
+        private ClassInfo GetClassInfoFromObjectId(OID objectId)
+        {
+            return GetSession().GetMetaModel().GetClassInfoFromId(objectId);
+        }
+
+        private ClassInfo GetClassInfoFromName(string className)
+        {
+            return GetSession().GetMetaModel().GetClassInfo(fullClassName: className, throwExceptionIfDoesNotExist: true);
+        }
+
+        private void ResetCommitListeners()
+        {
+            _storageEngine.ResetCommitListeners();
+        }
 
 
 
@@ -65,7 +95,7 @@ namespace NDatabase.Core.Engine
         /// </summary>
         private int _currentDepth;
 
-        
+
 
         /// <summary>
         ///   The fsi is the object that knows how to write and read native types
@@ -105,10 +135,10 @@ namespace NDatabase.Core.Engine
             for (var i = 0; i < nbClasses; i++)
             {
                 classInfo = _fileSystemReader.ReadClassInfoHeader(classOID);
-                    DLogger.Debug(string.Format(
-                        "{0}ObjectReader: Reading class header for {1} - oid = {2} prevOid={3} - nextOid={4}", OdbString.DepthToSpaces(_currentDepth),
-                        classInfo.FullClassName, classOID, classInfo.PreviousClassOID,
-                        classInfo.NextClassOID));
+                DLogger.Debug(string.Format(
+                    "{0}ObjectReader: Reading class header for {1} - oid = {2} prevOid={3} - nextOid={4}", OdbString.DepthToSpaces(_currentDepth),
+                    classInfo.FullClassName, classOID, classInfo.PreviousClassOID,
+                    classInfo.NextClassOID));
                 metaModel.AddClass(classInfo);
                 classOID = classInfo.NextClassOID;
             }
@@ -153,7 +183,7 @@ namespace NDatabase.Core.Engine
                 }
             }
 
-            _storageEngine.ResetCommitListeners();
+            ResetCommitListeners();
 
             // Read class info indexes
             foreach (var actualClassInfo in allClasses)
@@ -177,12 +207,14 @@ namespace NDatabase.Core.Engine
                 DLogger.Debug(
                     string.Format("{0}ObjectReader: Reading indexes for {1} : ", OdbString.DepthToSpaces(_currentDepth), actualClassInfo.FullClassName) +
                     count + " indexes");
-                
+
                 actualClassInfo.SetIndexes(indexes);
             }
 
             DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Current Meta Model is :" + metaModel);
         }
+
+        
 
         /// <summary>
         ///   Reads the pointers(ids or positions) of an object that has the specific oid
@@ -194,7 +226,7 @@ namespace NDatabase.Core.Engine
         {
             if (useCache)
             {
-                var objectInfoHeader = _storageEngine.GetSession().GetCache().GetObjectInfoHeaderByOid(oid, false);
+                var objectInfoHeader = GetCache().GetObjectInfoHeaderByOid(oid, false);
                 if (objectInfoHeader != null)
                     return objectInfoHeader;
             }
@@ -229,7 +261,7 @@ namespace NDatabase.Core.Engine
         public NonNativeObjectInfo ReadNonNativeObjectInfoFromPosition(ClassInfo classInfo, OID oid, long position,
                                                                        bool useCache, bool returnInstance)
         {
-            var lsession = _storageEngine.GetSession();
+            var lsession = GetSession();
             // Get a temporary cache just to cache NonNativeObjectInfo being read to
             // avoid duplicated reads
             var cache = lsession.GetCache();
@@ -241,22 +273,18 @@ namespace NDatabase.Core.Engine
             if (tmpCache.IsReadingObjectInfoWithOid(oid))
                 return tmpCache.GetObjectInfoByOid(oid);
             var objectInfoHeader = GetObjectInfoHeader(oid, position, useCache, cache);
-            if (classInfo == null)
-                classInfo =
-                    _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(objectInfoHeader.GetClassInfoId());
+            if (classInfo == null) {classInfo = GetClassInfoFromObjectId(objectInfoHeader.GetClassInfoId());}
             oid = objectInfoHeader.GetOid();
             // if class info do not match, reload class info
-            if (!classInfo.ClassInfoId.Equals(objectInfoHeader.GetClassInfoId()))
-                classInfo =
-                    _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(objectInfoHeader.GetClassInfoId());
-            
-                var positionAsString = objectInfoHeader.GetPosition().ToString();
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info of " + (classInfo == null
-                                                                                            ? "?"
-                                                                                            : classInfo.FullClassName) + " at " +
-                              positionAsString + " with id " + oid);
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Object Header is " + objectInfoHeader);
-            
+            if (!classInfo.ClassInfoId.Equals(objectInfoHeader.GetClassInfoId())) {classInfo = GetClassInfoFromObjectId(objectInfoHeader.GetClassInfoId());}
+
+            var positionAsString = objectInfoHeader.GetPosition().ToString();
+            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info of " + (classInfo == null
+                                                                                        ? "?"
+                                                                                        : classInfo.FullClassName) + " at " +
+                          positionAsString + " with id " + oid);
+            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Object Header is " + objectInfoHeader);
+
             var objectInfo = new NonNativeObjectInfo(objectInfoHeader, classInfo);
             objectInfo.SetOid(oid);
             objectInfo.SetClassInfo(classInfo);
@@ -334,7 +362,7 @@ namespace NDatabase.Core.Engine
                                                     relationAttributeNames, recursionLevel);
         }
 
-        
+
 
         /// <summary>
         ///   Reads an atomic object
@@ -366,7 +394,7 @@ namespace NDatabase.Core.Engine
             var position = GetObjectPositionFromItsOid(oid, useCache, true);
             var o = ReadNonNativeObjectAtPosition(position, useCache, returnInstance);
             // Clear the tmp cache. This cache is use to resolve cyclic references
-            _storageEngine.GetSession().GetTmpCache().ClearObjectInfos();
+            GetSession().GetTmpCache().ClearObjectInfos();
             return o;
         }
 
@@ -400,7 +428,7 @@ namespace NDatabase.Core.Engine
 
         public object BuildOneInstance(NonNativeObjectInfo objectInfo)
         {
-            return _instanceBuilder.BuildOneInstance(objectInfo, _storageEngine.GetSession().GetCache());
+            return _instanceBuilder.BuildOneInstance(objectInfo, GetCache());
         }
 
         public IInternalObjectSet<T> GetObjects<T>(IQuery query, bool inMemory, int startIndex, int endIndex)
@@ -423,7 +451,7 @@ namespace NDatabase.Core.Engine
                 queryResultAction = new ValuesQueryResultAction(valuesQuery, _storageEngine, _instanceBuilder);
             var objects = GetObjectInfos<IObjectValues>(valuesQuery, true, startIndex, endIndex, false,
                                                         queryResultAction);
-            return (IValues) objects;
+            return (IValues)objects;
         }
 
         public IObjectSet<TResult> GetObjectInfos<TResult>(IQuery query, bool inMemory, int startIndex, int endIndex,
@@ -445,8 +473,8 @@ namespace NDatabase.Core.Engine
         {
             return new InstanceBuilder(_storageEngine);
         }
-        
-        
+
+
 
         /// <summary>
         ///   Reads the body of a class info
@@ -457,7 +485,7 @@ namespace NDatabase.Core.Engine
         {
             var attributesDefinitionPositionAsString = classInfo.AttributesDefinitionPosition.ToString();
             DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
-            
+
             _fsi.SetReadPosition(classInfo.AttributesDefinitionPosition);
             var blockSize = _fsi.ReadInt();
             var blockType = _fsi.ReadByte();
@@ -469,12 +497,12 @@ namespace NDatabase.Core.Engine
             }
             // TODO This should be a short instead of long
             var nbAttributes = _fsi.ReadLong();
-            IOdbList<ClassAttributeInfo> attributes = new OdbList<ClassAttributeInfo>((int) nbAttributes);
+            IOdbList<ClassAttributeInfo> attributes = new OdbList<ClassAttributeInfo>((int)nbAttributes);
             for (var i = 0; i < nbAttributes; i++)
                 attributes.Add(ReadClassAttributeInfo());
             classInfo.Attributes = attributes;
             // FIXME Convert blocksize to long ??
-            var realBlockSize = (int) (_fsi.GetPosition() - classInfo.AttributesDefinitionPosition);
+            var realBlockSize = (int)(_fsi.GetPosition() - classInfo.AttributesDefinitionPosition);
             if (blockSize != realBlockSize)
             {
                 throw new OdbRuntimeException(
@@ -505,9 +533,7 @@ namespace NDatabase.Core.Engine
                     var subType = OdbType.GetFromId(subTypeId);
                     if (subType.IsNonNative())
                     {
-                        var fullClassName =
-                            _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(
-                                OIDFactory.BuildClassOID(_fsi.ReadLong())).FullClassName;
+                        var fullClassName = GetClassInfoFromObjectId(OIDFactory.BuildClassOID(_fsi.ReadLong())).FullClassName;
 
                         subType = subType.Copy(fullClassName);
                     }
@@ -518,9 +544,7 @@ namespace NDatabase.Core.Engine
                 if (type.IsEnum())
                 {
                     var classInfoId = _fsi.ReadLong();
-                    var metaModel = _storageEngine.GetSession().GetMetaModel();
-                    cai.SetFullClassName(
-                        metaModel.GetClassInfoFromId(OIDFactory.BuildClassOID(classInfoId)).FullClassName);
+                    cai.SetFullClassName(GetClassInfoFromObjectId(OIDFactory.BuildClassOID(classInfoId)).FullClassName);
                     // For enum, we need to create a new type just to set the real enum class name
                     type = type.Copy(cai.GetFullClassname());
                     cai.SetAttributeType(type);
@@ -532,10 +556,9 @@ namespace NDatabase.Core.Engine
             {
                 // This is a non native, gets the id of the type and gets it from
                 // meta-model
-                var metaModel = _storageEngine.GetSession().GetMetaModel();
                 var typeId = _fsi.ReadLong();
-                cai.SetFullClassName(metaModel.GetClassInfoFromId(OIDFactory.BuildClassOID(typeId)).FullClassName);
-                cai.SetClassInfo(metaModel.GetClassInfo(cai.GetFullClassname(), true));
+                cai.SetFullClassName(GetClassInfoFromObjectId(OIDFactory.BuildClassOID(typeId)).FullClassName);
+                cai.SetClassInfo(GetClassInfoFromName(cai.GetFullClassname()));
                 cai.SetAttributeType(OdbType.GetFromName(cai.GetFullClassname()));
             }
             cai.SetName(_fsi.ReadString());
@@ -561,7 +584,7 @@ namespace NDatabase.Core.Engine
             if (!returnInstance)
                 return nnoi;
             // Then converts it to the real object
-            var o = _instanceBuilder.BuildOneInstance(nnoi, _storageEngine.GetSession().GetCache());
+            var o = _instanceBuilder.BuildOneInstance(nnoi, GetCache());
             return o;
         }
 
@@ -648,13 +671,13 @@ namespace NDatabase.Core.Engine
                 if (useCache)
                 {
                     // the object info does not exist in the cache
-                    _storageEngine.GetSession().GetCache().AddObjectInfoOfNonCommitedObject(oip);
+                    GetCache().AddObjectInfoOfNonCommitedObject(oip);
                 }
                 return oip;
             }
             if (BlockTypes.IsPointer(objectBlockType))
                 throw new CorruptedDatabaseException(NDatabaseError.FoundPointer.AddParameter(oid).AddParameter(position));
-            
+
             var positionAsString = position.ToString();
             throw new CorruptedDatabaseException(
                 NDatabaseError.WrongTypeForBlockType.AddParameter(BlockTypes.BlockTypeNonNativeObject).AddParameter(
@@ -693,7 +716,7 @@ namespace NDatabase.Core.Engine
                     // TODO Is this correct ?
                     return new NonNativeDeletedObjectInfo();
                 }
-                
+
                 // Read block size and block type
                 // block type is used to decide what to do
                 _fsi.SetReadPosition(objectPosition);
@@ -764,7 +787,7 @@ namespace NDatabase.Core.Engine
                 throw new OdbRuntimeException(
                     NDatabaseError.InstancePositionOutOfFile.AddParameter(position).AddParameter(_fsi.GetLength()));
             }
-            var cache = _storageEngine.GetSession().GetCache();
+            var cache = GetCache();
             // If object is already being read, simply return its cache - to avoid
             // stackOverflow for cyclic references
             // FIXME check this : should we use cache?
@@ -791,10 +814,7 @@ namespace NDatabase.Core.Engine
                 //TODO: Get the object id is that needed?
                 objectInfoHeader.GetOid();
                 // If class info is not defined, define it
-                if (classInfo == null)
-                    classInfo =
-                        _storageEngine.GetSession().GetMetaModel().GetClassInfoFromId(
-                            objectInfoHeader.GetClassInfoId());
+                if (classInfo == null) { classInfo = GetClassInfoFromObjectId(objectInfoHeader.GetClassInfoId()); }
                 if (recursionLevel == 0)
                     map.SetObjectInfoHeader(objectInfoHeader);
                 // If object is native, it can have attributes, just return the
@@ -823,7 +843,7 @@ namespace NDatabase.Core.Engine
                         var firstDotIndex = attributeNameToSearch.IndexOf(".", StringComparison.Ordinal);
                         var relationAttributeName = attributeNameToSearch.Substring(firstDotIndex + 1);
                         var singleAttributeName = attributeNameToSearch.Substring(0, firstDotIndex);
-                        
+
                         var attributeId = classInfo.GetAttributeId(singleAttributeName);
                         cai = classInfo.GetAttributeInfo(attributeId, attributeNameToSearch);
 
@@ -978,10 +998,10 @@ namespace NDatabase.Core.Engine
             var bytes = _fsi.ReadBytes(size);
             //TODO: block size and type not used
             ByteArrayConverter.ByteArrayToInt(bytes);
-            
+
             var odbTypeId = ByteArrayConverter.ByteArrayToInt(bytes, 5);
             var isNull = ByteArrayConverter.ByteArrayToBoolean(bytes, 9);
-            
+
             nah.SetOdbTypeId(odbTypeId);
             nah.SetNull(isNull);
             return nah;
@@ -1025,26 +1045,26 @@ namespace NDatabase.Core.Engine
             throw new OdbRuntimeException(NDatabaseError.NativeTypeNotSupported.AddParameter(realTypeId));
         }
 
-        
-
-        
-        
- 
-       
 
 
-        
+
+
+
+
+
+
+
         private ArrayObjectInfo ReadArrayFromDatabaseFile(long position, bool useCache, bool returnObjects)
         {
             var realArrayComponentClassName = _fsi.ReadString();
             var subTypeId = OdbType.GetFromName(realArrayComponentClassName);
-            
+
             // read the size of the array
             var arraySize = _fsi.ReadInt();
             var size = arraySize.ToString();
             DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: reading an array of " + realArrayComponentClassName + " with " +
                           size + " elements");
-            
+
             var array = new object[arraySize];
             // build a n array to store all element positions
             var objectIdentifications = new long[arraySize];
@@ -1071,7 +1091,7 @@ namespace NDatabase.Core.Engine
                 {
                     var positionAsString = position.ToString();
                     throw new OdbRuntimeException(
-                        NDatabaseError.InternalError.AddParameter("in ObjectReader.readArray - at position " + positionAsString),e);
+                        NDatabaseError.InternalError.AddParameter("in ObjectReader.readArray - at position " + positionAsString), e);
                 }
             }
             var aoi = new ArrayObjectInfo(array);
