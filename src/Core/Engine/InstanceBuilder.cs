@@ -94,7 +94,7 @@ namespace NDatabase.Core.Engine
             {
                 // Gets the id of this field
                 var attributeId = classInfo.GetAttributeId(fieldInfo.Name);
-                Log4NetHelper.Debug(string.Concat("InstanceBuilder: ", "getting field with name ", fieldInfo.Name, ", attribute id is ",
+                Log4NetHelper.LogDebugMessage(string.Concat("InstanceBuilder: ", "getting field with name ", fieldInfo.Name, ", attribute id is ",
                                             attributeId.ToString()));
 
                 var abstractObjectInfo = objectInfo.GetAttributeValueFromId(attributeId);
@@ -129,7 +129,7 @@ namespace NDatabase.Core.Engine
                                 NDatabaseError.AttributeReferencesADeletedObject.AddParameter(
                                     objectInfo.GetClassInfo().FullClassName).AddParameter(
                                         objectInfo.GetOid()).AddParameter(fieldInfo.Name);
-                            Log4NetHelper.Warning("InstanceBuilder: " + warning);
+                            Log4NetHelper.LogWarningMessage("InstanceBuilder: " + warning);
                             value = null;
                         }
                         else

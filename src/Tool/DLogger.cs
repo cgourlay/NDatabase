@@ -11,13 +11,6 @@ namespace NDatabase.Tool
             Loggers.Add(logger);
         }
 
-        internal static void Warning(object @object)
-        {
-            foreach (var logger in Loggers)
-            {
-                logger.Warning(MessageToLog(@object));
-            }
-        }
 
         private static string MessageToLog(object @object)
         {
@@ -26,7 +19,23 @@ namespace NDatabase.Tool
                 : @object.ToString();
         }
 
-        internal static void Debug(object @object)
+
+
+
+
+        internal static void LogFatalMessage(object @object)
+        {
+        }
+
+        internal static void LogWarningMessage(object @object)
+        {
+            foreach (var logger in Loggers)
+            {
+                logger.Warning(MessageToLog(@object));
+            }
+        }
+
+        internal static void LogDebugMessage(object @object)
         {
             foreach (var logger in Loggers)
             {
@@ -34,7 +43,7 @@ namespace NDatabase.Tool
             }
         }
 
-        internal static void Info(object @object)
+        internal static void LogInfoMessage(object @object)
         {
             foreach (var logger in Loggers)
             {
@@ -42,7 +51,7 @@ namespace NDatabase.Tool
             }
         }
 
-        internal static void Error(object @object)
+        internal static void LogErrorMessage(object @object)
         {
             foreach (var logger in Loggers)
             {

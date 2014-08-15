@@ -94,12 +94,12 @@ namespace NDatabase.Core.Engine
             #region Logging
 
             var writePositionAsString = writePosition.ToString();
-            Log4NetHelper.Debug(
+            Log4NetHelper.LogDebugMessage(
                 string.Format("ObjectWriter: Persisting class into database : {0} with oid {1} at pos ",
                               newClassInfo.FullClassName, classInfoId) + writePositionAsString);
 
             var numberOfAttributesAsString = newClassInfo.NumberOfAttributes.ToString();
-            Log4NetHelper.Debug("ObjectWriter: class " + newClassInfo.FullClassName + " has " + numberOfAttributesAsString + " attributes");
+            Log4NetHelper.LogDebugMessage("ObjectWriter: class " + newClassInfo.FullClassName + " has " + numberOfAttributesAsString + " attributes");
             
             #endregion
 
@@ -116,7 +116,7 @@ namespace NDatabase.Core.Engine
 
                 var positionAsString = lastClassinfo.Position.ToString();
                 var classOffsetAsString = StorageEngineConstant.ClassOffsetNextClassPosition.ToString();
-                Log4NetHelper.Debug("ObjectWriter: changing next class oid. of class info " + lastClassinfo.FullClassName + "@ " +
+                Log4NetHelper.LogDebugMessage("ObjectWriter: changing next class oid. of class info " + lastClassinfo.FullClassName + "@ " +
                               positionAsString + " + offset " + classOffsetAsString +
                               string.Format(" to {0}({1})", newClassInfo.ClassInfoId, newClassInfo.FullClassName));
                 
@@ -216,7 +216,7 @@ namespace NDatabase.Core.Engine
 
             FileSystemProcessor.FileSystemInterface.SetWritePosition(position, writeInTransaction);
             var positionAsString = position.ToString();
-            Log4NetHelper.Debug("ObjectWriter: Writing new Class info header at " + positionAsString + " : " + classInfo);
+            Log4NetHelper.LogDebugMessage("ObjectWriter: Writing new Class info header at " + positionAsString + " : " + classInfo);
             
             // Real value of block size is only known at the end of the writing
             FileSystemProcessor.FileSystemInterface.WriteInt(0, writeInTransaction);
@@ -582,11 +582,11 @@ namespace NDatabase.Core.Engine
             var nextObjectOID = header.GetNextObjectOID();
             var isInConnectedZone = objectIsInConnectedZone.ToString();
             var hasIndex = withIndex.ToString();
-            Log4NetHelper.Debug("ObjectWriter: Deleting object with id " + header.GetOid() + " - In connected zone =" +
+            Log4NetHelper.LogDebugMessage("ObjectWriter: Deleting object with id " + header.GetOid() + " - In connected zone =" +
                           isInConnectedZone + " -  with index =" + hasIndex);
 
             var positionAsString = objectPosition.ToString();
-            Log4NetHelper.Debug("ObjectWriter: position =  " + positionAsString + " | prev oid = " + previousObjectOID + " | next oid = " +
+            Log4NetHelper.LogDebugMessage("ObjectWriter: position =  " + positionAsString + " | prev oid = " + previousObjectOID + " | next oid = " +
                           nextObjectOID);
             
             var isFirstObject = previousObjectOID == null;
@@ -752,7 +752,7 @@ namespace NDatabase.Core.Engine
         private void WriteClassInfoBody(ClassInfo classInfo, long position, bool writeInTransaction)
         {
             var positionAsString = position.ToString();
-            Log4NetHelper.Debug("ObjectWriter: Writing new Class info body at " + positionAsString + " : " + classInfo);
+            Log4NetHelper.LogDebugMessage("ObjectWriter: Writing new Class info body at " + positionAsString + " : " + classInfo);
             // updates class info
             classInfo.AttributesDefinitionPosition = position;
             // FIXME : change this to write only the position and not the whole
@@ -782,7 +782,7 @@ namespace NDatabase.Core.Engine
         private long WriteNativeObjectInfo(NativeObjectInfo noi, long position, bool writeInTransaction)
         {
             var positionAsString = position.ToString();
-            Log4NetHelper.Debug(string.Concat("ObjectWriter: Writing native object at", positionAsString,
+            Log4NetHelper.LogDebugMessage(string.Concat("ObjectWriter: Writing native object at", positionAsString,
                                         string.Format(" : Type={0} | Value={1}",
                                                       OdbType.GetNameFromId(noi.GetOdbTypeId()), noi)));
             
@@ -1117,7 +1117,7 @@ namespace NDatabase.Core.Engine
 
         private static void StoreFreeSpace(long currentPosition, int blockSize)
         {
-            Log4NetHelper.Debug(string.Concat("ObjectWriter: Storing free space at position ", currentPosition.ToString(),
+            Log4NetHelper.LogDebugMessage(string.Concat("ObjectWriter: Storing free space at position ", currentPosition.ToString(),
                                         " | block size = ", blockSize.ToString()));
         }
 

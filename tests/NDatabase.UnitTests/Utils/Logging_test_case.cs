@@ -60,10 +60,10 @@ namespace NDatabase.UnitTests.Utils
             var logger = new FakeLogger();
             OdbConfiguration.RegisterLogger(logger);
 
-            Log4NetHelper.Info("info");
-            Log4NetHelper.Debug("debug");
-            Log4NetHelper.Warning("warning");
-            Log4NetHelper.Error("error");
+            Log4NetHelper.LogInfoMessage("info");
+            Log4NetHelper.LogDebugMessage("debug");
+            Log4NetHelper.LogWarningMessage("warning");
+            Log4NetHelper.LogErrorMessage((object) "error");
 
             Assert.That(logger.GetInfoMessage(), Is.EqualTo("info"));
             Assert.That(logger.GetDebugMessage(), Is.EqualTo("debug"));

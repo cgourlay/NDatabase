@@ -124,7 +124,7 @@ namespace NDatabase.Transaction
             var numberOfWriteActionsAsString = _numberOfWriteActions.ToString();
             var hasAllWriteActionsInMemoryAsString = _hasAllWriteActionsInMemory.ToString();
 
-            Log4NetHelper.Info("OdbTransaction: Commiting " + numberOfWriteActionsAsString + " write actions - In Memory : " +
+            Log4NetHelper.LogInfoMessage("OdbTransaction: Commiting " + numberOfWriteActionsAsString + " write actions - In Memory : " +
                          hasAllWriteActionsInMemoryAsString + string.Format(" - sid={0}", _session.GetId()));
             
             // Check if database has been rollbacked
@@ -270,7 +270,7 @@ namespace NDatabase.Transaction
         /// <param name="persistWriteAction"> To indicate if write action must be persisted </param>
         private void AddWriteAction(WriteAction writeAction, bool persistWriteAction)
         {
-            Log4NetHelper.Info(string.Format("OdbTransaction: Adding WriteAction in Transaction of session {0}", _session.GetId()));
+            Log4NetHelper.LogInfoMessage(string.Format("OdbTransaction: Adding WriteAction in Transaction of session {0}", _session.GetId()));
 
             if (writeAction.IsEmpty())
                 return;
@@ -303,7 +303,7 @@ namespace NDatabase.Transaction
                 var maxNumberOfWriteObjectPerTransactionAsString =
                     StorageEngineConstant.MaxNumberOfWriteObjectPerTransaction.ToString();
 
-                Log4NetHelper.Info("OdbTransaction: Number of objects has exceeded the max number " + numberOfWriteActions + "/" +
+                Log4NetHelper.LogInfoMessage("OdbTransaction: Number of objects has exceeded the max number " + numberOfWriteActions + "/" +
                              maxNumberOfWriteObjectPerTransactionAsString +
                              ": switching to persistent transaction managment");
                 
@@ -344,7 +344,7 @@ namespace NDatabase.Transaction
         {
             CheckFileAccess(null);
 
-            Log4NetHelper.Debug(string.Format("OdbTransaction: # Persisting transaction {0}", GetName()));
+            Log4NetHelper.LogDebugMessage(string.Format("OdbTransaction: # Persisting transaction {0}", GetName()));
 
             _fsi.SetWritePosition(0, false);
             _fsi.WriteBoolean(_isCommited, false);
@@ -412,7 +412,7 @@ namespace NDatabase.Transaction
             if (!sessionMetaModel.HasChanged())
                 return;
 
-            Log4NetHelper.Debug("OdbTransaction: Start commitMetaModel");
+            Log4NetHelper.LogDebugMessage("OdbTransaction: Start commitMetaModel");
 
             // In local mode, we must not reload the meta model as there is no
             // concurrent access
@@ -508,12 +508,12 @@ namespace NDatabase.Transaction
 
                 writer.FileSystemProcessor.UpdateInstanceFieldsOfClassInfo(newClassInfo, false);
 
-                Log4NetHelper.Debug(string.Format("OdbTransaction: Analysing class {0}", newClassInfo.FullClassName));
-                Log4NetHelper.Debug(string.Format("\t-Commited CI   = {0}", newClassInfo));
-                Log4NetHelper.Debug(
+                Log4NetHelper.LogDebugMessage(string.Format("OdbTransaction: Analysing class {0}", newClassInfo.FullClassName));
+                Log4NetHelper.LogDebugMessage(string.Format("\t-Commited CI   = {0}", newClassInfo));
+                Log4NetHelper.LogDebugMessage(
                     string.Format("\t-connect last commited object with oid {0} to first uncommited object {1}",
                                   lastCommittedObjectOid, newClassInfo.UncommittedZoneInfo.First));
-                Log4NetHelper.Debug(string.Concat("\t-Commiting new Number of objects = ",
+                Log4NetHelper.LogDebugMessage(string.Concat("\t-Commiting new Number of objects = ",
                                             newClassInfo.NumberOfObjects.ToString()));
                 
             }
@@ -547,7 +547,7 @@ namespace NDatabase.Transaction
 
         private void LoadWriteActions(string filename, bool apply)
         {
-            Log4NetHelper.Debug(string.Format("OdbTransaction: Load write actions of {0}", filename));
+            Log4NetHelper.LogDebugMessage(string.Format("OdbTransaction: Load write actions of {0}", filename));
 
             CheckFileAccess(filename);
             _fsi.SetReadPosition(0);
@@ -555,7 +555,7 @@ namespace NDatabase.Transaction
             _creationDateTime = _fsi.ReadLong();
             var totalNumberOfWriteActions = _fsi.ReadLong();
 
-            Log4NetHelper.Info(string.Concat("OdbTransaction: ", _writeActions.Count.ToString(), " write actions in file"));
+            Log4NetHelper.LogInfoMessage(string.Concat("OdbTransaction: ", _writeActions.Count.ToString(), " write actions in file"));
 
             for (var i = 0; i < totalNumberOfWriteActions; i++)
             {
@@ -588,7 +588,7 @@ namespace NDatabase.Transaction
         {
             if (!_isCommited)
             {
-                Log4NetHelper.Info("OdbTransaction: can not execute a transaction that is not confirmed");
+                Log4NetHelper.LogInfoMessage("OdbTransaction: can not execute a transaction that is not confirmed");
                 return;
             }
 

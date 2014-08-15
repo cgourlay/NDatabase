@@ -441,7 +441,7 @@ namespace NDatabase.Core.Engine
                 totalNbObjects++;
 
                     if (j % 10000 == 0)
-                        Log4NetHelper.Info(string.Concat("\nStorageEngine: ", totalNbObjects.ToString(), " objects saved."));
+                        Log4NetHelper.LogInfoMessage(string.Concat("\nStorageEngine: ", totalNbObjects.ToString(), " objects saved."));
                 
                 j++;
             }
@@ -456,13 +456,13 @@ namespace NDatabase.Core.Engine
             var nbObjectsAsString = totalNbObjects.ToString();
             var timeAsString = time.ToString();
 
-            Log4NetHelper.Info(string.Format("StorageEngine: New storage {0} created with {1} objects in {2} ms.", newFileName,
+            Log4NetHelper.LogInfoMessage(string.Format("StorageEngine: New storage {0} created with {1} objects in {2} ms.", newFileName,
                                        nbObjectsAsString, timeAsString));
         }
 
         private void UpdateMetaModel()
         {
-            Log4NetHelper.Info("StorageEngine: Automatic refactoring : updating meta model");
+            Log4NetHelper.LogInfoMessage("StorageEngine: Automatic refactoring : updating meta model");
 
             var metaModel = GetMetaModel();
 

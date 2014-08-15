@@ -109,7 +109,7 @@ namespace NDatabase.Core.Engine
 
             // read the size of the array
             var arraySize = _fileSystemInterface.ReadInt();
-            Log4NetHelper.Debug(string.Format("{0}ObjectReader: reading an array of {1} with {2} elements.", OdbString.DepthToSpaces(_currentDepth), realArrayComponentClassName, arraySize));
+            Log4NetHelper.LogDebugMessage(string.Format("{0}ObjectReader: reading an array of {1} with {2} elements.", OdbString.DepthToSpaces(_currentDepth), realArrayComponentClassName, arraySize));
 
             var array = new object[arraySize];
             // build a n array to store all element positions
@@ -250,7 +250,7 @@ namespace NDatabase.Core.Engine
             for (var i = 0; i < nbClasses; i++)
             {
                 classInfo = _fileSystemReader.ReadClassInfoHeader(classOID);
-                Log4NetHelper.Debug(string.Format(
+                Log4NetHelper.LogDebugMessage(string.Format(
                     "{0}ObjectReader: Reading class header for {1} - oid = {2} prevOid={3} - nextOid={4}", OdbString.DepthToSpaces(_currentDepth),
                     classInfo.FullClassName, classOID, classInfo.PreviousClassOID,
                     classInfo.NextClassOID));
@@ -268,7 +268,7 @@ namespace NDatabase.Core.Engine
             {
                 classInfo = ReadClassInfoBody(currentClassInfo);
 
-                Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader:  class body for " + classInfo.FullClassName);
+                Log4NetHelper.LogDebugMessage(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader:  class body for " + classInfo.FullClassName);
             }
 
             // No need to add it to metamodel, it is already in it.
@@ -277,7 +277,7 @@ namespace NDatabase.Core.Engine
             foreach (var actualClassInfo in allClasses)
             {
 
-                Log4NetHelper.Debug(string.Format("{0}ObjectReader: Reading class info last instance {1}", OdbString.DepthToSpaces(_currentDepth),
+                Log4NetHelper.LogDebugMessage(string.Format("{0}ObjectReader: Reading class info last instance {1}", OdbString.DepthToSpaces(_currentDepth),
                                             actualClassInfo.FullClassName));
                 if (actualClassInfo.CommitedZoneInfo.HasObjects())
                 {
@@ -319,14 +319,14 @@ namespace NDatabase.Core.Engine
 
 
                 var count = indexes.Count.ToString();
-                Log4NetHelper.Debug(
+                Log4NetHelper.LogDebugMessage(
                     string.Format("{0}ObjectReader: Reading indexes for {1} : ", OdbString.DepthToSpaces(_currentDepth), actualClassInfo.FullClassName) +
                     count + " indexes");
 
                 actualClassInfo.SetIndexes(indexes);
             }
 
-            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Current Meta Model is :" + metaModel);
+            Log4NetHelper.LogDebugMessage(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Current Meta Model is :" + metaModel);
         }
 
         
@@ -383,7 +383,7 @@ namespace NDatabase.Core.Engine
             var tmpCache = lsession.GetTmpCache();
             // ICache tmpCache =cache;
             // We are dealing with a non native object
-            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info with oid " + oid);
+            Log4NetHelper.LogDebugMessage(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info with oid " + oid);
             // If the object is already being read, then return from the cache
             if (tmpCache.IsReadingObjectInfoWithOid(oid))
                 return tmpCache.GetObjectInfoByOid(oid);
@@ -394,11 +394,11 @@ namespace NDatabase.Core.Engine
             if (!classInfo.ClassInfoId.Equals(objectInfoHeader.GetClassInfoId())) {classInfo = GetClassInfoFromObjectId(objectInfoHeader.GetClassInfoId());}
 
             var positionAsString = objectInfoHeader.GetPosition().ToString();
-            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info of " + (classInfo == null
+            Log4NetHelper.LogDebugMessage(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info of " + (classInfo == null
                                                                                         ? "?"
                                                                                         : classInfo.FullClassName) + " at " +
                           positionAsString + " with id " + oid);
-            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Object Header is " + objectInfoHeader);
+            Log4NetHelper.LogDebugMessage(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Object Header is " + objectInfoHeader);
 
             var objectInfo = new NonNativeObjectInfo(objectInfoHeader, classInfo);
             objectInfo.SetOid(oid);
@@ -592,7 +592,7 @@ namespace NDatabase.Core.Engine
         private ClassInfo ReadClassInfoBody(ClassInfo classInfo)
         {
             var attributesDefinitionPositionAsString = classInfo.AttributesDefinitionPosition.ToString();
-            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
+            Log4NetHelper.LogDebugMessage(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
 
             _fileSystemInterface.SetReadPosition(classInfo.AttributesDefinitionPosition);
             var blockSize = _fileSystemInterface.ReadInt();
@@ -1040,7 +1040,7 @@ namespace NDatabase.Core.Engine
                                                         bool returnObject, bool readHeader)
         {
             var positionAsString = position.ToString();
-            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading native object of type " +
+            Log4NetHelper.LogDebugMessage(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading native object of type " +
                           OdbType.GetNameFromId(odbDeclaredTypeId) + " at position " + positionAsString);
             // The realType is initialized with the declared type
             var realTypeId = odbDeclaredTypeId;
