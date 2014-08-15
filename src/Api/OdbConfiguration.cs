@@ -117,7 +117,7 @@ namespace NDatabase.Api
             if (!IsLoggingEnabled())
                 EnableLogging();
 
-            DLogger.Register(logger);
+            Log4NetHelper.Register(logger);
         }
     }
 }

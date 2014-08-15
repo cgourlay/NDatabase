@@ -20,8 +20,8 @@ namespace NDatabase.Meta
 
             foreach (var result in _results)
             {
-                DLogger.Info(string.Format("MetaModelCompabilityChecker: Class {0} has changed :", result.GetFullClassName()));
-                DLogger.Info("MetaModelCompabilityChecker: " + result);
+                Log4NetHelper.Info(string.Format("MetaModelCompabilityChecker: Class {0} has changed :", result.GetFullClassName()));
+                Log4NetHelper.Info("MetaModelCompabilityChecker: " + result);
             }
 
             return _results.Count != 0;

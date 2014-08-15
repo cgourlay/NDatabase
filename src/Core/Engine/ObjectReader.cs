@@ -44,6 +44,64 @@ namespace NDatabase.Core.Engine
         private readonly IFileSystemReader _fileSystemReader;
         private IStorageEngine _storageEngine;
 
+        private AbstractObjectInfo ReadObjectInfoFromPosition(ClassInfo classInfo, long objectPosition, bool useCache, bool returnObjects)
+        {
+            _currentDepth++;
+            try
+            {
+                // Protection against bad parameter value
+                if (objectPosition > _fileSystemInterface.GetLength())
+                {
+                    throw new OdbRuntimeException(
+                        NDatabaseError.InstancePositionOutOfFile.AddParameter(objectPosition).AddParameter(
+                            _fileSystemInterface.GetLength()));
+                }
+                if (objectPosition == StorageEngineConstant.DeletedObjectPosition || objectPosition == StorageEngineConstant.NullObjectPosition)
+                {
+                    // TODO Is this correct ?
+                    return new NonNativeDeletedObjectInfo();
+                }
+
+                // Read block size and block type
+                // block type is used to decide what to do
+                _fileSystemInterface.SetReadPosition(objectPosition);
+                // Reads the block size
+                //TODO:  we are reading blockSize, but not using them, is that needed?
+                _fileSystemInterface.ReadInt();
+                // And the block type
+                var objectBlockType = _fileSystemInterface.ReadByte();
+                if (BlockTypes.IsNullNonNativeObject(objectBlockType)){return new NonNativeNullObjectInfo(classInfo);}
+                if (BlockTypes.IsNullNativeObject(objectBlockType)){return NullNativeObjectInfo.GetInstance();}
+                if (BlockTypes.IsDeletedObject(objectBlockType)){return new NonNativeDeletedObjectInfo();}
+                // Checks if what we are reading is only a pointer to the real
+                // block, if
+                // it is the case, just recall this method with the right position
+                if (BlockTypes.IsPointer(objectBlockType)) {throw new CorruptedDatabaseException(NDatabaseError.FoundPointer.AddParameter(objectPosition));}
+                // Native of non native object ?
+                if (BlockTypes.IsNative(objectBlockType))
+                {
+                    // Reads the odb type id of the native objects
+                    var odbTypeId = _fileSystemInterface.ReadInt();
+                    // Reads a boolean to know if object is null
+                    var isNull = _fileSystemInterface.ReadBoolean(); // Native object is null ?
+
+                    // last parameter is false=> no need to read native object
+                    // header, it has been done
+                    return isNull 
+                               ? new NullNativeObjectInfo(odbTypeId)
+                               : ReadNativeObjectInfo(odbTypeId, objectPosition, useCache, returnObjects, false);
+                }
+
+                if (BlockTypes.IsNonNative(objectBlockType)) {throw new OdbRuntimeException(NDatabaseError.ObjectReaderDirectCall);}
+
+                throw new OdbRuntimeException(NDatabaseError.UnknownBlockType.AddParameter(objectBlockType).AddParameter(_fileSystemInterface.GetPosition() - 1));
+            }
+            finally
+            {
+                _currentDepth--;
+            }
+        }
+
         private ArrayObjectInfo ReadArrayFromDatabaseFile(long position, bool useCache, bool returnObjects)
         {
             var realArrayComponentClassName = _fileSystemInterface.ReadString();
@@ -51,14 +109,12 @@ namespace NDatabase.Core.Engine
 
             // read the size of the array
             var arraySize = _fileSystemInterface.ReadInt();
-            var size = arraySize.ToString();
-            DLogger.Debug(string.Format("{0}ObjectReader: reading an array of {1} with {2} elements.", OdbString.DepthToSpaces(_currentDepth), realArrayComponentClassName, size));
+            Log4NetHelper.Debug(string.Format("{0}ObjectReader: reading an array of {1} with {2} elements.", OdbString.DepthToSpaces(_currentDepth), realArrayComponentClassName, arraySize));
 
             var array = new object[arraySize];
             // build a n array to store all element positions
             var objectIdentifications = new long[arraySize];
-            for (var i = 0; i < arraySize; i++)
-                objectIdentifications[i] = _fileSystemInterface.ReadLong();
+            for (var i = 0; i < arraySize; i++) {objectIdentifications[i] = _fileSystemInterface.ReadLong();}
             for (var i = 0; i < arraySize; i++)
             {
                 try
@@ -85,6 +141,18 @@ namespace NDatabase.Core.Engine
             aoi.SetRealArrayComponentClassName(realArrayComponentClassName);
             aoi.SetComponentTypeId(subTypeId.Id);
             return aoi;
+        }
+
+        private AbstractObjectInfo ReadObjectInfo(long objectIdentification, bool useCache, bool returnObjects)
+        {
+            if (!IsObjectIdentifier(objectIdentification)) {return ReadObjectInfoFromPosition(null, objectIdentification, useCache, returnObjects);}
+            var oid = OIDFactory.BuildObjectOID(-objectIdentification);
+            return ReadNonNativeObjectInfoFromOid(null, oid, useCache, returnObjects);
+        }
+
+        private static bool IsObjectIdentifier(long objectIdentification)
+        {
+            return objectIdentification < 0;
         }
 
         private AtomicNativeObjectInfo ReadAtomicNativeObjectInfo(int objectDatabaseTypeId)
@@ -182,7 +250,7 @@ namespace NDatabase.Core.Engine
             for (var i = 0; i < nbClasses; i++)
             {
                 classInfo = _fileSystemReader.ReadClassInfoHeader(classOID);
-                DLogger.Debug(string.Format(
+                Log4NetHelper.Debug(string.Format(
                     "{0}ObjectReader: Reading class header for {1} - oid = {2} prevOid={3} - nextOid={4}", OdbString.DepthToSpaces(_currentDepth),
                     classInfo.FullClassName, classOID, classInfo.PreviousClassOID,
                     classInfo.NextClassOID));
@@ -200,7 +268,7 @@ namespace NDatabase.Core.Engine
             {
                 classInfo = ReadClassInfoBody(currentClassInfo);
 
-                DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader:  class body for " + classInfo.FullClassName);
+                Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader:  class body for " + classInfo.FullClassName);
             }
 
             // No need to add it to metamodel, it is already in it.
@@ -209,7 +277,7 @@ namespace NDatabase.Core.Engine
             foreach (var actualClassInfo in allClasses)
             {
 
-                DLogger.Debug(string.Format("{0}ObjectReader: Reading class info last instance {1}", OdbString.DepthToSpaces(_currentDepth),
+                Log4NetHelper.Debug(string.Format("{0}ObjectReader: Reading class info last instance {1}", OdbString.DepthToSpaces(_currentDepth),
                                             actualClassInfo.FullClassName));
                 if (actualClassInfo.CommitedZoneInfo.HasObjects())
                 {
@@ -251,14 +319,14 @@ namespace NDatabase.Core.Engine
 
 
                 var count = indexes.Count.ToString();
-                DLogger.Debug(
+                Log4NetHelper.Debug(
                     string.Format("{0}ObjectReader: Reading indexes for {1} : ", OdbString.DepthToSpaces(_currentDepth), actualClassInfo.FullClassName) +
                     count + " indexes");
 
                 actualClassInfo.SetIndexes(indexes);
             }
 
-            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Current Meta Model is :" + metaModel);
+            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Current Meta Model is :" + metaModel);
         }
 
         
@@ -315,7 +383,7 @@ namespace NDatabase.Core.Engine
             var tmpCache = lsession.GetTmpCache();
             // ICache tmpCache =cache;
             // We are dealing with a non native object
-            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info with oid " + oid);
+            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info with oid " + oid);
             // If the object is already being read, then return from the cache
             if (tmpCache.IsReadingObjectInfoWithOid(oid))
                 return tmpCache.GetObjectInfoByOid(oid);
@@ -326,11 +394,11 @@ namespace NDatabase.Core.Engine
             if (!classInfo.ClassInfoId.Equals(objectInfoHeader.GetClassInfoId())) {classInfo = GetClassInfoFromObjectId(objectInfoHeader.GetClassInfoId());}
 
             var positionAsString = objectInfoHeader.GetPosition().ToString();
-            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info of " + (classInfo == null
+            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading Non Native Object info of " + (classInfo == null
                                                                                         ? "?"
                                                                                         : classInfo.FullClassName) + " at " +
                           positionAsString + " with id " + oid);
-            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Object Header is " + objectInfoHeader);
+            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Object Header is " + objectInfoHeader);
 
             var objectInfo = new NonNativeObjectInfo(objectInfoHeader, classInfo);
             objectInfo.SetOid(oid);
@@ -524,7 +592,7 @@ namespace NDatabase.Core.Engine
         private ClassInfo ReadClassInfoBody(ClassInfo classInfo)
         {
             var attributesDefinitionPositionAsString = classInfo.AttributesDefinitionPosition.ToString();
-            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
+            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading new Class info Body at " + attributesDefinitionPositionAsString);
 
             _fileSystemInterface.SetReadPosition(classInfo.AttributesDefinitionPosition);
             var blockSize = _fileSystemInterface.ReadInt();
@@ -628,16 +696,7 @@ namespace NDatabase.Core.Engine
             return o;
         }
 
-        private AbstractObjectInfo ReadObjectInfo(long objectIdentification, bool useCache, bool returnObjects)
-        {
-            // If object identification is negative, it is an oid.
-            if (objectIdentification < 0)
-            {
-                var oid = OIDFactory.BuildObjectOID(-objectIdentification);
-                return ReadNonNativeObjectInfoFromOid(null, oid, useCache, returnObjects);
-            }
-            return ReadObjectInfoFromPosition(null, objectIdentification, useCache, returnObjects);
-        }
+        
 
         private ObjectInfoHeader ReadObjectInfoHeaderFromPosition(OID oid, long position, bool useCache)
         {
@@ -724,86 +783,7 @@ namespace NDatabase.Core.Engine
                     objectBlockType).AddParameter(positionAsString + "/oid=" + oid));
         }
 
-        /// <summary>
-        ///   Reads an object info(Object meta information like its type and its values) from the database file <p /> <pre>reads its type and then read all its attributes.</pre>
-        /// </summary>
-        /// <remarks>
-        ///   Reads an object info(Object meta information like its type and its values) from the database file <p /> <pre>reads its type and then read all its attributes.
-        ///                                                                                                             If one attribute is a non native object, it will be read (recursivly).
-        ///                                                                                                             &lt;p/&gt;</pre>
-        /// </remarks>
-        /// <param name="classInfo"> If null, we are probably reading a native instance : String for example </param>
-        /// <param name="objectPosition"> </param>
-        /// <param name="useCache"> To indicate if cache must be used. If not, the old version of the object will read </param>
-        /// <param name="returnObjects"> </param>
-        /// <returns> The object abstract meta representation @ </returns>
-        private AbstractObjectInfo ReadObjectInfoFromPosition(ClassInfo classInfo, long objectPosition, bool useCache,
-                                                             bool returnObjects)
-        {
-            _currentDepth++;
-            try
-            {
-                // Protection against bad parameter value
-                if (objectPosition > _fileSystemInterface.GetLength())
-                {
-                    throw new OdbRuntimeException(
-                        NDatabaseError.InstancePositionOutOfFile.AddParameter(objectPosition).AddParameter(
-                            _fileSystemInterface.GetLength()));
-                }
-                if (objectPosition == StorageEngineConstant.DeletedObjectPosition ||
-                    objectPosition == StorageEngineConstant.NullObjectPosition)
-                {
-                    // TODO Is this correct ?
-                    return new NonNativeDeletedObjectInfo();
-                }
-
-                // Read block size and block type
-                // block type is used to decide what to do
-                _fileSystemInterface.SetReadPosition(objectPosition);
-                // Reads the block size
-                //TODO:  we are reading blockSize, but not using them, is that needed?
-                _fileSystemInterface.ReadInt();
-                // And the block type
-                var objectBlockType = _fileSystemInterface.ReadByte();
-                // Null objects
-                if (BlockTypes.IsNullNonNativeObject(objectBlockType))
-                    return new NonNativeNullObjectInfo(classInfo);
-                if (BlockTypes.IsNullNativeObject(objectBlockType))
-                    return NullNativeObjectInfo.GetInstance();
-                // Deleted objects
-                if (BlockTypes.IsDeletedObject(objectBlockType))
-                    return new NonNativeDeletedObjectInfo();
-                // Checks if what we are reading is only a pointer to the real
-                // block, if
-                // it is the case, just recall this method with the right position
-                if (BlockTypes.IsPointer(objectBlockType))
-                    throw new CorruptedDatabaseException(NDatabaseError.FoundPointer.AddParameter(objectPosition));
-                // Native of non native object ?
-                if (BlockTypes.IsNative(objectBlockType))
-                {
-                    // Reads the odb type id of the native objects
-                    var odbTypeId = _fileSystemInterface.ReadInt();
-                    // Reads a boolean to know if object is null
-                    var isNull = _fileSystemInterface.ReadBoolean(); // Native object is null ?
-
-                    // last parameter is false=> no need to read native object
-                    // header, it has been done
-                    return isNull
-                               ? new NullNativeObjectInfo(odbTypeId)
-                               : ReadNativeObjectInfo(odbTypeId, objectPosition, useCache, returnObjects, false);
-                }
-
-                if (BlockTypes.IsNonNative(objectBlockType))
-                    throw new OdbRuntimeException(NDatabaseError.ObjectReaderDirectCall);
-
-                throw new OdbRuntimeException(
-                    NDatabaseError.UnknownBlockType.AddParameter(objectBlockType).AddParameter(_fileSystemInterface.GetPosition() - 1));
-            }
-            finally
-            {
-                _currentDepth--;
-            }
-        }
+       
 
         /// <param name="classInfo"> The class info of the objects to be returned </param>
         /// <param name="oid"> The Object id of the object to return data </param>
@@ -1060,7 +1040,7 @@ namespace NDatabase.Core.Engine
                                                         bool returnObject, bool readHeader)
         {
             var positionAsString = position.ToString();
-            DLogger.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading native object of type " +
+            Log4NetHelper.Debug(OdbString.DepthToSpaces(_currentDepth) + "ObjectReader: Reading native object of type " +
                           OdbType.GetNameFromId(odbDeclaredTypeId) + " at position " + positionAsString);
             // The realType is initialized with the declared type
             var realTypeId = odbDeclaredTypeId;

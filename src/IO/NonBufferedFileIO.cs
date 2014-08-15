@@ -101,7 +101,7 @@ namespace NDatabase.IO
             }
             catch (IOException e)
             {
-                DLogger.Error("NonBufferedFileIO" + e);
+                Log4NetHelper.Error("NonBufferedFileIO" + e);
                 throw new OdbRuntimeException(NDatabaseError.InternalError.AddParameter(e.Message), e);
             }
 

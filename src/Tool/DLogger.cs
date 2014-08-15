@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace NDatabase.Tool
 {
-    internal static class DLogger
+    internal static class Log4NetHelper
     {
         private static readonly IList<ILogger> Loggers = new List<ILogger>();
 

@@ -220,7 +220,7 @@ namespace NDatabase.Core.Query.Criteria
             }
             var nbObjects = ClassInfo.NumberOfObjects;
 
-            DLogger.Debug(string.Format("GenericQueryExecutor: loading {0} instance(s) of {1}", nbObjects, ClassInfo.FullClassName));
+            Log4NetHelper.Debug(string.Format("GenericQueryExecutor: loading {0} instance(s) of {1}", nbObjects, ClassInfo.FullClassName));
 
             if (ExecuteStartAndEndOfQueryAction())
                 queryResultAction.Start();
@@ -337,7 +337,7 @@ namespace NDatabase.Core.Query.Criteria
                         AddParameter(nbObjects).AddParameter(btreeSize));
             }
 
-            DLogger.Debug(string.Format("GenericQueryExecutor: loading {0} instance(s) of {1}", nbObjects, ClassInfo.FullClassName));
+            Log4NetHelper.Debug(string.Format("GenericQueryExecutor: loading {0} instance(s) of {1}", nbObjects, ClassInfo.FullClassName));
 
             if (ExecuteStartAndEndOfQueryAction())
                 queryResultAction.Start();
@@ -400,7 +400,7 @@ namespace NDatabase.Core.Query.Criteria
         private IInternalObjectSet<T> ExecuteForOneOid<T>(bool inMemory, bool returnObjects,
                                                           IMatchingObjectAction queryResultAction)
         {
-            DLogger.Debug(string.Format("GenericQueryExecutor: loading Object with oid {0} - class {1}", Query.GetOidOfObjectToQuery(),
+            Log4NetHelper.Debug(string.Format("GenericQueryExecutor: loading Object with oid {0} - class {1}", Query.GetOidOfObjectToQuery(),
                                         ClassInfo.FullClassName));
 
             if (ExecuteStartAndEndOfQueryAction())
