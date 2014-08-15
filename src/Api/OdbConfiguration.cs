@@ -1,5 +1,3 @@
-using NDatabase.Tool;
-
 namespace NDatabase.Api
 {
     /// <summary>
@@ -76,48 +74,6 @@ namespace NDatabase.Api
         public static void SetIndexBTreeDegree(int indexBTreeSize)
         {
             _indexBTreeDegree = indexBTreeSize;
-        }
-
-        /// <summary>
-        /// Determines whether [is logging enabled].
-        /// </summary>
-        /// <returns>
-        ///   <c>true</c> if [is logging enabled]; otherwise, <c>false</c>.
-        /// </returns>
-        public static bool IsLoggingEnabled()
-        {
-            return _loggingEnabled;
-        }
-
-        /// <summary>
-        /// Enables the logging.
-        /// </summary>
-        public static void EnableLogging()
-        {
-            _loggingEnabled = true;
-        }
-
-        /// <summary>
-        /// Disables the logging.
-        /// </summary>
-        public static void DisableLogging()
-        {
-            _loggingEnabled = false;
-        }
-
-        /// <summary>
-        /// Registers the logger.
-        /// </summary>
-        /// <remarks>
-        /// Automatically enables the logging.
-        /// </remarks>
-        /// <param name="logger">The logger.</param>
-        public static void RegisterLogger(ILogger logger)
-        {
-            if (!IsLoggingEnabled())
-                EnableLogging();
-
-            Log4NetHelper.Register(logger);
         }
     }
 }

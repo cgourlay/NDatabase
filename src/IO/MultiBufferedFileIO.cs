@@ -256,7 +256,7 @@ namespace NDatabase.IO
             {
                 var message = string.Concat("MultiBufferedFileIO: End Of File reached - position = ", newPosition.ToString(), " : Length = ",
                                             length.ToString());
-                Log4NetHelper.LogErrorMessage((object) message);
+                Log4NetHelper.Instance.LogErrorMessage(message);
                 throw new OdbRuntimeException(
                     NDatabaseError.EndOfFileReached.AddParameter(newPosition).AddParameter(length));
             }

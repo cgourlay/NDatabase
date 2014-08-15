@@ -88,12 +88,12 @@ namespace NDatabase.Core.Engine
 
             var classInfoIndex = GetClassInfoIndex(className, indexName, classInfo);
 
-            Log4NetHelper.LogInfoMessage(string.Format("StorageEngine: Deleting index {0} on class {1}", indexName, className));
+            Log4NetHelper.Instance.LogInfoMessage(string.Format("StorageEngine: Deleting index {0} on class {1}", indexName, className));
 
             Delete(classInfoIndex);
             classInfo.RemoveIndex(classInfoIndex);
 
-            Log4NetHelper.LogInfoMessage(string.Format("StorageEngine: Index {0} deleted", indexName));
+            Log4NetHelper.Instance.LogInfoMessage(string.Format("StorageEngine: Index {0} deleted", indexName));
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace NDatabase.Core.Engine
         /// </summary>
         public void RebuildIndex(string className, string indexName)
         {
-            Log4NetHelper.LogInfoMessage(string.Format("StorageEngine: Rebuilding index {0} on class {1}", indexName, className));
+            Log4NetHelper.Instance.LogInfoMessage(string.Format("StorageEngine: Rebuilding index {0} on class {1}", indexName, className));
 
             var classInfo = GetMetaModel().GetClassInfo(className, true);
             var classInfoIndex = GetClassInfoIndex(className, indexName, classInfo);
@@ -142,12 +142,12 @@ namespace NDatabase.Core.Engine
 
            
                 var numberOfObjectsAsString = classInfo.NumberOfObjects.ToString();
-                Log4NetHelper.LogInfoMessage(
+                Log4NetHelper.Instance.LogInfoMessage(
                     string.Format(
                         "StorageEngine: Creating index {0} on class {1} - Class has already {2} Objects. Updating index",
                         indexName, className, numberOfObjectsAsString));
 
-                Log4NetHelper.LogInfoMessage(string.Format("StorageEngine: {0} : loading {1} objects from database", indexName,
+                Log4NetHelper.Instance.LogInfoMessage(string.Format("StorageEngine: {0} : loading {1} objects from database", indexName,
                                            numberOfObjectsAsString));
            
             // We must load all objects and insert them in the index!
@@ -155,7 +155,7 @@ namespace NDatabase.Core.Engine
             var objects = GetObjectInfos(criteriaQuery);
 
                  numberOfObjectsAsString = classInfo.NumberOfObjects.ToString();
-                Log4NetHelper.LogInfoMessage(string.Format("StorageEngine: {0} : {1} objects loaded", indexName, numberOfObjectsAsString));
+                Log4NetHelper.Instance.LogInfoMessage(string.Format("StorageEngine: {0} : {1} objects loaded", indexName, numberOfObjectsAsString));
             
             while (objects.HasNext())
             {
@@ -165,8 +165,8 @@ namespace NDatabase.Core.Engine
                 btree.Insert(odbComparable, nnoi.GetOid());
             }
 
-            if (OdbConfiguration.IsLoggingEnabled())
-                Log4NetHelper.LogInfoMessage(string.Format("StorageEngine: {0} created!", indexName));
+            
+                Log4NetHelper.Instance.LogInfoMessage(string.Format("StorageEngine: {0} created!", indexName));
         }
 
         public abstract void AddCommitListener(ICommitListener arg1);

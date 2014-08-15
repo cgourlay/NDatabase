@@ -37,6 +37,9 @@
     <AssemblyOriginatorKeyFile>ndatabase.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\..\External-Lib\Moq.dll</HintPath>
     </Reference>
@@ -112,7 +115,6 @@
     <Compile Include="Triggers\When_we_use_object_representation_as_the_wrapper_for_nnoi.cs" />
     <Compile Include="TypeResolution\TestGenericObject.cs" />
     <Compile Include="TypeResolution\TypeResolution_TestCase.cs" />
-    <Compile Include="Utils\Logging_test_case.cs" />
     <Compile Include="Utils\Test_list_extensions.cs" />
     <Compile Include="Utils\Test_order_by_constants.cs" />
     <Compile Include="Utils\When_working_with_class_utils.cs" />
@@ -129,7 +131,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="ndatabase.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="product_box.png">

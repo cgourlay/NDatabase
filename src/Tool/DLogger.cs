@@ -1,62 +1,54 @@
-using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+
+using log4net;
+using log4net.Config;
 
 namespace NDatabase.Tool
 {
-    internal static class Log4NetHelper
+    internal class Log4NetHelper
     {
-        private static readonly IList<ILogger> Loggers = new List<ILogger>();
+        internal static readonly Log4NetHelper Instance = new Log4NetHelper();
+        private readonly FileInfo _loggingConfigurationFile = new FileInfo(ConfigurationManager.AppSettings["logging-configuration-file"]);
 
-        internal static void Register(ILogger logger)
+        private Log4NetHelper()
         {
-            Loggers.Add(logger);
+            XmlConfigurator.ConfigureAndWatch(_loggingConfigurationFile);
         }
 
-
-        private static string MessageToLog(object @object)
+        private static string GetDeclaringType()
         {
-            return @object == null
-                ? "null"
-                : @object.ToString();
+            return "TODO: Get the declaring type.";
         }
 
-
-
-
-
-        internal static void LogFatalMessage(object @object)
+        private static ILog Logger
         {
+            get { return LogManager.GetLogger(GetDeclaringType()); }
         }
 
-        internal static void LogWarningMessage(object @object)
+        internal void LogDebugMessage(string messageToLog)
         {
-            foreach (var logger in Loggers)
-            {
-                logger.Warning(MessageToLog(@object));
-            }
+            Logger.Debug(messageToLog);
         }
 
-        internal static void LogDebugMessage(object @object)
+        internal void LogErrorMessage(string messageToLog)
         {
-            foreach (var logger in Loggers)
-            {
-                logger.Debug(MessageToLog(@object));
-            }
+            Logger.Error(messageToLog);
         }
 
-        internal static void LogInfoMessage(object @object)
+        internal void LogFatalMessage(string messageToLog)
         {
-            foreach (var logger in Loggers)
-            {
-                logger.Info(MessageToLog(@object));
-            }
+            Logger.Fatal(messageToLog);
         }
 
-        internal static void LogErrorMessage(object @object)
+        internal void LogInfoMessage(string messageToLog)
         {
-            foreach (var logger in Loggers)
-            {
-                logger.Error(MessageToLog(@object));
-            }
+            Logger.Info(messageToLog);
+        }
+
+        internal void LogWarningMessage(string messageToLog)
+        {
+            Logger.Warn(messageToLog);
         }
     }
 }

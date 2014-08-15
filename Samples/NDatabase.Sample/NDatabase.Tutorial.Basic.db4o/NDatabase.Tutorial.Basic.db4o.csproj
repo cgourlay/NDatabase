@@ -56,6 +56,9 @@
     <Reference Include="Db4objects.Db4o">
       <HintPath>..\External-Lib\Db4objects.Db4o.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -72,6 +75,9 @@
       <Project>{B29DF7D5-F1E7-4C51-BE72-6468E6F83AF8}</Project>
       <Name>NDatabase.Tutorial.Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

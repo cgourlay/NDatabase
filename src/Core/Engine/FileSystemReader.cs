@@ -160,7 +160,7 @@ namespace NDatabase.Core.Engine
         /// <returns> The object position, if object has been marked as deleted then return StorageEngineConstant.DELETED_OBJECT_POSITION @ </returns>
         public long GetObjectPositionFromItsOid(OID oid, bool useCache, bool throwException)
         {
-            Log4NetHelper.LogDebugMessage("ObjectReader: getObjectPositionFromItsId for oid " + oid);
+            Log4NetHelper.Instance.LogDebugMessage("ObjectReader: getObjectPositionFromItsId for oid " + oid);
             // Check if oid is in cache
             var position = StorageEngineConstant.ObjectIsNotInCache;
             if (useCache)
@@ -199,21 +199,21 @@ namespace NDatabase.Core.Engine
                            : StorageEngineConstant.DeletedObjectPosition;
             }
             var positionAsString = objectPosition.ToString();
-            Log4NetHelper.LogDebugMessage("ObjectReader: object position of object with oid " + oid + " is " + positionAsString);
+            Log4NetHelper.Instance.LogDebugMessage("ObjectReader: object position of object with oid " + oid + " is " + positionAsString);
             
             return objectPosition;
         }
 
         public long ReadOidPosition(OID oid)
         {
-            Log4NetHelper.LogDebugMessage("ObjectReader: Start of readOidPosition for oid " + oid);
+            Log4NetHelper.Instance.LogDebugMessage("ObjectReader: Start of readOidPosition for oid " + oid);
 
             var blockNumber = StorageEngineConstant.GetIdBlockNumberOfOid(oid);
             var blockPosition = GetIdBlockPositionFromNumber(blockNumber);
 
             var blockNumberAsString = blockNumber.ToString();
             var blockPositionAsString = blockPosition.ToString();
-            Log4NetHelper.LogDebugMessage(string.Format("ObjectReader: Block number of oid {0} is ", oid) + blockNumberAsString +
+            Log4NetHelper.Instance.LogDebugMessage(string.Format("ObjectReader: Block number of oid {0} is ", oid) + blockNumberAsString +
                           " / block position = " + blockPositionAsString);
             
             var position = blockPosition + StorageEngineConstant.BlockIdOffsetForStartOfRepetition +
@@ -221,7 +221,7 @@ namespace NDatabase.Core.Engine
                            StorageEngineConstant.IdBlockRepetitionSize;
 
             var positionAsString = position.ToString();
-            Log4NetHelper.LogDebugMessage(string.Format("ObjectReader: End of readOidPosition for oid {0} returning position ", oid) + positionAsString);
+            Log4NetHelper.Instance.LogDebugMessage(string.Format("ObjectReader: End of readOidPosition for oid {0} returning position ", oid) + positionAsString);
             
             return position;
         }
@@ -268,7 +268,7 @@ namespace NDatabase.Core.Engine
         /// <returns> The read class info object @ </returns>
         public ClassInfo ReadClassInfoHeader(OID classInfoOid)
         {
-            Log4NetHelper.LogDebugMessage("FileSystemReader: Reading new Class info Header with oid " + classInfoOid);
+            Log4NetHelper.Instance.LogDebugMessage("FileSystemReader: Reading new Class info Header with oid " + classInfoOid);
             var classInfoPosition = GetObjectPositionFromItsOid(classInfoOid, true, true);
             _fsi.SetReadPosition(classInfoPosition);
             var blockSize = _fsi.ReadInt();
