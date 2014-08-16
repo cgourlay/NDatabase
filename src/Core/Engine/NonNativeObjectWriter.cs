@@ -8,6 +8,7 @@ using NDatabase.Meta;
 using NDatabase.Meta.Compare;
 using NDatabase.Storage;
 using NDatabase.Tool;
+using NDatabase.Tool.Extensions;
 using NDatabase.Tool.Wrappers;
 using NDatabase.Triggers;
 

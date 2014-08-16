@@ -5,6 +5,7 @@ using System.Text;
 using NDatabase.Api;
 using NDatabase.Exceptions;
 using NDatabase.Tool;
+using NDatabase.Tool.Extensions;
 using NDatabase.Tool.Wrappers;
 using NDatabase.TypeResolution;
 

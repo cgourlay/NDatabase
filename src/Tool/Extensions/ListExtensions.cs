@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NDatabase.Tool
+namespace NDatabase.Tool.Extensions
 {
     internal static class ListExtensions
     {

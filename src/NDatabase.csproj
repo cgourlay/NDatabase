@@ -321,7 +321,7 @@
     <Compile Include="IO\MultiBuffer.cs" />
     <Compile Include="IO\OdbDirectory.cs" />
     <Compile Include="IO\OdbFileStream.cs" />
-    <Compile Include="Tool\ListExtensions.cs" />
+    <Compile Include="Tool\Extensions\ListExtensions.cs" />
     <Compile Include="Tool\Wrappers\IOdbList.cs" />
     <Compile Include="Tool\Wrappers\OdbList.cs" />
     <Compile Include="Tool\Wrappers\OdbHashMap2.cs" />
