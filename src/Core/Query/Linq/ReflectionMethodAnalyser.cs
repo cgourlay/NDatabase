@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using NDatabase.Exceptions;
 using NDatabase.Reflection;
 using NDatabase.Tool;
+using NDatabase.Tool.Extensions;
 
 namespace NDatabase.Core.Query.Linq
 {

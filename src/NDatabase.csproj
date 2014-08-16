@@ -296,7 +296,7 @@
     <Compile Include="Core\BTree\IndexManager.cs" />
     <Compile Include="Odb.cs" />
     <Compile Include="OdbExt.cs" />
-    <Compile Include="Tool\DictionaryExtensions.cs" />
+    <Compile Include="Tool\Extensions\DictionaryExtensions.cs" />
     <Compile Include="Tool\UniqueIdGenerator.cs" />
     <Compile Include="Api\IObjectRepresentation.cs" />
     <Compile Include="Api\IObjectSet.cs" />

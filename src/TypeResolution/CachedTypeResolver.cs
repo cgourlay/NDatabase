@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NDatabase.Tool;
+using NDatabase.Tool.Extensions;
 
 namespace NDatabase.TypeResolution
 {

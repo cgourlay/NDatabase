@@ -6,6 +6,7 @@ using NDatabase.Api;
 using NDatabase.Container;
 using NDatabase.Services;
 using NDatabase.Tool;
+using NDatabase.Tool.Extensions;
 using NDatabase.Tool.Wrappers;
 using NDatabase.TypeResolution;
 

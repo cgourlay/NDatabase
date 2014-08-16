@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using NDatabase.Tool.Extensions;
 
 namespace NDatabase.Tool.Wrappers
 {
