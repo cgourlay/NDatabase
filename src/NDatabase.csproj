@@ -316,7 +316,7 @@
     <Compile Include="Reflection\MatchContext.cs" />
     <Compile Include="Reflection\MethodBodyReader.cs" />
     <Compile Include="Core\Query\Linq\ReflectionMethodAnalyser.cs" />
-    <Compile Include="Tool\DLogger.cs" />
+    <Compile Include="Tool\Log4NetHelper.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IO\MultiBuffer.cs" />
     <Compile Include="IO\OdbDirectory.cs" />

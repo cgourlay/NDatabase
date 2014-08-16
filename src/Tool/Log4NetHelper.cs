@@ -18,7 +18,7 @@ namespace NDatabase.Tool
 
         private static string GetDeclaringType()
         {
-            return "TODO: Get the declaring type.";
+            return typeof (Log4NetHelper).FullName;
         }
 
         private static ILog Logger
