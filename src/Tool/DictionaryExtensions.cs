@@ -8,13 +8,9 @@ namespace NDatabase.Tool
         internal static TItem GetOrAdd<TKey, TItem>(this Dictionary<TKey, TItem> self, TKey key, Func<TKey, TItem> produce)
         {
             TItem value;
-            var success = self.TryGetValue(key, out value);
-            if (success)
-                return value;
-
+            if (self.TryGetValue(key, out value)) { return value; }
             value = produce(key);
             self.Add(key, value);
-
             return value;
         }
 
