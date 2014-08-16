@@ -8,6 +8,7 @@ using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Services;
 using NDatabase.Tool;
+using NDatabase.Tool.Helpers;
 using NDatabase.Tool.Wrappers;
 
 namespace NDatabase.Core.BTree

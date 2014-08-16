@@ -12,6 +12,7 @@ using NDatabase.Exceptions;
 using NDatabase.Indexing;
 using NDatabase.Meta;
 using NDatabase.Tool;
+using NDatabase.Tool.Helpers;
 
 namespace NDatabase.Core.Query.Criteria
 {

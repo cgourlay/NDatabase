@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using NDatabase.Exceptions;
 using NDatabase.Tool;
+using NDatabase.Tool.Helpers;
 
 namespace NDatabase.IO
 {

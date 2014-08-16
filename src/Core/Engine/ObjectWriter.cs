@@ -11,6 +11,7 @@ using NDatabase.Meta.Introspector;
 using NDatabase.Oid;
 using NDatabase.Storage;
 using NDatabase.Tool;
+using NDatabase.Tool.Helpers;
 using NDatabase.Triggers;
 
 namespace NDatabase.Core.Engine

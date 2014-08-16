@@ -17,6 +17,7 @@ using NDatabase.Oid;
 using NDatabase.Services;
 using NDatabase.Storage;
 using NDatabase.Tool;
+using NDatabase.Tool.Helpers;
 using NDatabase.Tool.Wrappers;
 using NDatabase.Triggers;
 

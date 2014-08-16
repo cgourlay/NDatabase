@@ -8,6 +8,7 @@ using NDatabase.Exceptions;
 using NDatabase.IO;
 using NDatabase.Meta;
 using NDatabase.Tool;
+using NDatabase.Tool.Helpers;
 using NDatabase.Tool.Wrappers;
 
 namespace NDatabase.Transaction

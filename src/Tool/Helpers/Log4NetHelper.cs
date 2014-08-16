@@ -1,10 +1,9 @@
 using System.Configuration;
 using System.IO;
-
 using log4net;
 using log4net.Config;
 
-namespace NDatabase.Tool
+namespace NDatabase.Tool.Helpers
 {
     internal class Log4NetHelper
     {
