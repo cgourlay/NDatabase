@@ -6,8 +6,7 @@ namespace NDatabase.Tool
     {
         internal static bool IsNullOrEmpty<T>(this IList<T> list)
         {
-            if (list == null) { return true; }
-            return list.Count == 0;
+            return list == null || list.Count == 0;
         }
     }
 }
