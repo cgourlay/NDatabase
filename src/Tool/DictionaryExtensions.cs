@@ -21,12 +21,8 @@ namespace NDatabase.Tool
         internal static TItem GetOrAdd<TKey, TItem>(this Dictionary<TKey, TItem> self, TKey key, TItem item)
         {
             TItem value;
-            var success = self.TryGetValue(key, out value);
-            if (success)
-                return value;
-
+            if (self.TryGetValue(key, out value)) { return value;}
             self.Add(key, item);
-
             return item;
         }
     }
