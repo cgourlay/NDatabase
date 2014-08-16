@@ -7,8 +7,8 @@ using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Meta.Introspector;
 using NDatabase.Tool;
-using NDatabase.Tool.Helpers;
 using NDatabase.Triggers;
+using NDatabase.Utilities.Helpers;
 
 namespace NDatabase.Core.Engine
 {

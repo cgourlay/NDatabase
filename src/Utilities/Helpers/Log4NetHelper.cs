@@ -3,7 +3,7 @@ using System.IO;
 using log4net;
 using log4net.Config;
 
-namespace NDatabase.Tool.Helpers
+namespace NDatabase.Utilities.Helpers
 {
     internal class Log4NetHelper
     {

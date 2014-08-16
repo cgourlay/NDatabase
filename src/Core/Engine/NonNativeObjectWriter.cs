@@ -8,9 +8,9 @@ using NDatabase.Meta;
 using NDatabase.Meta.Compare;
 using NDatabase.Storage;
 using NDatabase.Tool;
-using NDatabase.Tool.Extensions;
 using NDatabase.Tool.Wrappers;
 using NDatabase.Triggers;
+using NDatabase.Utilities.Extensions;
 
 namespace NDatabase.Core.Engine
 {

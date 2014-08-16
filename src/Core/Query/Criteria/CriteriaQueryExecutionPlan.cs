@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using NDatabase.Api;
 using NDatabase.Meta;
 using NDatabase.Tool;
-using NDatabase.Tool.Extensions;
 using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Extensions;
 
 namespace NDatabase.Core.Query.Criteria
 {

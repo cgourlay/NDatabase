@@ -5,8 +5,8 @@ using NDatabase.Meta;
 using NDatabase.Oid;
 using NDatabase.Storage;
 using NDatabase.Tool;
-using NDatabase.Tool.Helpers;
 using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Helpers;
 
 namespace NDatabase.Core.Engine
 {

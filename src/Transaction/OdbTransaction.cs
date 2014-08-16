@@ -8,9 +8,9 @@ using NDatabase.Exceptions;
 using NDatabase.IO;
 using NDatabase.Meta;
 using NDatabase.Tool;
-using NDatabase.Tool.Extensions;
-using NDatabase.Tool.Helpers;
 using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Extensions;
+using NDatabase.Utilities.Helpers;
 
 namespace NDatabase.Transaction
 {

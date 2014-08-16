@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using NDatabase.Exceptions;
 using NDatabase.Tool;
-using NDatabase.Tool.Extensions;
+using NDatabase.Utilities.Extensions;
 
 namespace NDatabase.Core.Query.Linq
 {

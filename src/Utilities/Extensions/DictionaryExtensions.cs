@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NDatabase.Tool.Extensions
+namespace NDatabase.Utilities.Extensions
 {
     internal static class DictionaryExtensions
     {

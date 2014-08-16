@@ -4,8 +4,8 @@ using NDatabase.Api;
 using NDatabase.Exceptions;
 using NDatabase.Oid;
 using NDatabase.Tool;
-using NDatabase.Tool.Extensions;
 using NDatabase.TypeResolution;
+using NDatabase.Utilities.Extensions;
 
 namespace NDatabase.Meta
 {

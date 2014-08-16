@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using NDatabase.Tool;
-using NDatabase.Tool.Extensions;
+using NDatabase.Utilities.Extensions;
 using NUnit.Framework;
 
 namespace NDatabase.UnitTests.Utils

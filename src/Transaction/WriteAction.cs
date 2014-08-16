@@ -7,7 +7,7 @@ using NDatabase.Core.Engine;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Tool;
-using NDatabase.Tool.Helpers;
+using NDatabase.Utilities.Helpers;
 
 namespace NDatabase.Transaction
 {

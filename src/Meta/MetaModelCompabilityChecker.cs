@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NDatabase.Exceptions;
 using NDatabase.Services;
 using NDatabase.Tool;
-using NDatabase.Tool.Helpers;
+using NDatabase.Utilities.Helpers;
 
 namespace NDatabase.Meta
 {

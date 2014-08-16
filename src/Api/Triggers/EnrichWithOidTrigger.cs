@@ -5,7 +5,7 @@ using System.Reflection;
 using NDatabase.Container;
 using NDatabase.Services;
 using NDatabase.Tool;
-using NDatabase.Tool.Extensions;
+using NDatabase.Utilities.Extensions;
 
 namespace NDatabase.Api.Triggers
 {
