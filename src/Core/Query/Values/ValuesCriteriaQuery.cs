@@ -152,7 +152,7 @@ namespace NDatabase.Core.Query.Values
             IDictionary<string, string> map = new OdbHashMap<string, string>();
             list.AddAll(base.GetAllInvolvedFields());
 
-            if (!list.IsEmpty())
+            if (!list.IsNullOrEmpty())
             {
                 foreach (var value in list)
                     map.Add(value, value);

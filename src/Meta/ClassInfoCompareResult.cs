@@ -26,7 +26,7 @@ namespace NDatabase.Meta
 
         public bool IsCompatible()
         {
-            return _incompatibleChanges.IsEmpty();
+            return _incompatibleChanges.IsNullOrEmpty();
         }
 
         public override string ToString()
@@ -52,7 +52,7 @@ namespace NDatabase.Meta
 
         public bool HasCompatibleChanges()
         {
-            return !_compatibleChanges.IsEmpty();
+            return !_compatibleChanges.IsNullOrEmpty();
         }
 
         public string GetFullClassName()

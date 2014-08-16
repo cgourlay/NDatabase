@@ -7,10 +7,10 @@ namespace NDatabase.UnitTests.Utils
     public class Test_list_extensions
     {
         [Test]
-        public void It_should_throw_exception_when_list_is_null()
+        public void It_should_return_false_when_list_is_null()
         {
             IList<string> nullList = null;
-            Assert.That(() => nullList.IsEmpty(), Throws.Exception);
+            Assert.That(() => nullList.IsNullOrEmpty(), Is.False);
         }
     }
 }

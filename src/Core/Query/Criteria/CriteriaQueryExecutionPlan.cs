@@ -92,8 +92,7 @@ namespace NDatabase.Core.Query.Criteria
                 ((IInternalConstraint) _query.GetCriteria()).CanUseIndex())
             {
                 var fields = _query.GetAllInvolvedFields();
-                if (fields.IsEmpty())
-                    _useIndex = false;
+                if (fields.IsNullOrEmpty()){_useIndex = false;}
                 else
                 {
                     var fieldIds = GetAllInvolvedFieldIds(fields);

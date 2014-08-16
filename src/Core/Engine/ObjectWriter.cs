@@ -563,7 +563,7 @@ namespace NDatabase.Core.Engine
             var oid = header.GetOid();
             // gets class info from in memory meta model
             var ci = _session.GetMetaModel().GetClassInfoFromId(classInfoId);
-            var withIndex = !ci.GetIndexes().IsEmpty();
+            var withIndex = !ci.GetIndexes().IsNullOrEmpty();
             NonNativeObjectInfo nnoi = null;
             // When there is index,we must *always* load the old meta representation
             // to compute index keys

@@ -343,7 +343,7 @@ namespace NDatabase.Core.Engine
                 hasObject = false;
             // When there is index,we must *always* load the old meta representation
             // to compute index keys
-            var withIndex = !nnoi.GetClassInfo().GetIndexes().IsEmpty();
+            var withIndex = !nnoi.GetClassInfo().GetIndexes().IsNullOrEmpty();
             NonNativeObjectInfo oldMetaRepresentation = null;
             // Used to check consistency, at the end, the number of
             // nbConnectedObjects must and nbUnconnected must remain unchanged

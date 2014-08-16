@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace NDatabase.Tool
 {
     internal static class ListExtensions
     {
-        internal static bool IsEmpty<TItem>(this IList<TItem> self)
+        internal static bool IsNullOrEmpty<T>(this IList<T> list)
         {
-            if (self == null)
-                throw new ArgumentNullException("self");
-
-            return self.Count == 0;
+            if (list == null) { return true; }
+            return list.Count == 0;
         }
     }
 }

@@ -385,8 +385,7 @@ namespace NDatabase.Transaction
         private void ManageCommitListenersAfter()
         {
             var listeners = _session.GetStorageEngine().GetCommitListeners();
-            if (listeners == null || listeners.IsEmpty())
-                return;
+            if (listeners.IsNullOrEmpty()) {return;}
 
             foreach (var commitListener in listeners)
                 commitListener.AfterCommit();
@@ -395,8 +394,7 @@ namespace NDatabase.Transaction
         private void ManageCommitListenersBefore()
         {
             var listeners = _session.GetStorageEngine().GetCommitListeners();
-            if (listeners == null || listeners.IsEmpty())
-                return;
+            if (listeners.IsNullOrEmpty()){return;}
 
             foreach (var commitListener in listeners)
                 commitListener.BeforeCommit();

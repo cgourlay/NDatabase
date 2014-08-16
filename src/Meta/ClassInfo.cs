@@ -489,7 +489,7 @@ namespace NDatabase.Meta
 
         public bool HasIndex()
         {
-            return _indexes != null && !_indexes.IsEmpty();
+            return !_indexes.IsNullOrEmpty();
         }
 
         internal ClassAttributeInfo GetAttributeInfo(int attributeId, string attributeNameToSearch)
