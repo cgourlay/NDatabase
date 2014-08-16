@@ -12,10 +12,5 @@ namespace NDatabase.Tool
 
             return self.Count == 0;
         }
-
-        internal static bool IsNotEmpty<TItem>(this IList<TItem> self)
-        {
-            return !self.IsEmpty(); 
-        }
     }
 }

@@ -11,7 +11,6 @@ namespace NDatabase.UnitTests.Utils
         {
             IList<string> nullList = null;
             Assert.That(() => nullList.IsEmpty(), Throws.Exception);
-            Assert.That(() => nullList.IsNotEmpty(), Throws.Exception);
         }
     }
 }
