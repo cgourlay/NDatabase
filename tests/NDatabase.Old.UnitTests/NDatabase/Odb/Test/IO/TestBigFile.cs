@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using NDatabase;
 using NDatabase.Core.Query;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 using Test.NDatabase.Odb.Test.VO.Login;
 

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Moq;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
 using NDatabase.UnitTests.TestData;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 
 namespace NDatabase.UnitTests.Bugs.Compability

@@ -1,6 +1,6 @@
 using System;
 using NDatabase.Exceptions;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Query.Criteria.Evaluations
 {

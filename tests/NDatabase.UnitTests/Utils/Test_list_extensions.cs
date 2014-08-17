@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using NDatabase.Tool;
 using NDatabase.Utilities.Extensions;
 using NUnit.Framework;
 

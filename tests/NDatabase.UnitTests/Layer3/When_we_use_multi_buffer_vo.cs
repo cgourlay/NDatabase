@@ -1,5 +1,5 @@
 ﻿using NDatabase.IO;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 
 namespace NDatabase.UnitTests.Layer3

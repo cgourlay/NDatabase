@@ -1,5 +1,5 @@
 ﻿using NDatabase.Exceptions;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 
 namespace NDatabase.UnitTests.Utils

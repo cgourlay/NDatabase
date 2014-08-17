@@ -1,9 +1,8 @@
 using System;
-using NDatabase;
 using NDatabase.Api;
 using NDatabase.Btree;
 using NDatabase.Core.BTree;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 
 namespace Test.NDatabase.Odb.Test.Btree.Odb

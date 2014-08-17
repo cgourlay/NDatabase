@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using NDatabase.Api;
 using NDatabase.Exceptions;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.TypeResolution;
 using NDatabase.Utilities.Extensions;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Meta
 {

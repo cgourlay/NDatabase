@@ -3,7 +3,7 @@ using NDatabase.Api;
 using NDatabase.Core.Query.List;
 using NDatabase.Indexing;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Query.Values
 {

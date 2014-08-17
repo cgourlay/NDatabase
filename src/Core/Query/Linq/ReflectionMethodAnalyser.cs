@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using NDatabase.Exceptions;
 using NDatabase.Reflection;
-using NDatabase.Tool;
 using NDatabase.Utilities.Extensions;
 
 namespace NDatabase.Core.Query.Linq

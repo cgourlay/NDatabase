@@ -2,7 +2,7 @@ using System;
 using NDatabase;
 using NDatabase.Api;
 using NDatabase.Oid;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 using Test.NDatabase.Tool;
 

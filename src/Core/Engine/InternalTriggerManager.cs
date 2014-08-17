@@ -5,8 +5,8 @@ using NDatabase.Api.Triggers;
 using NDatabase.Container;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
 using NDatabase.Triggers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Engine
 {

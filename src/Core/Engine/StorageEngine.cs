@@ -16,10 +16,9 @@ using NDatabase.Meta.Introspector;
 using NDatabase.Oid;
 using NDatabase.Services;
 using NDatabase.Storage;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.Triggers;
 using NDatabase.Utilities.Helpers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Engine
 {

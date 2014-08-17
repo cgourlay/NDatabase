@@ -1,7 +1,7 @@
 using NDatabase.Core;
 using NDatabase.Core.Engine;
 using NDatabase.IO;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 
 namespace Test.NDatabase.Odb.Test.IO

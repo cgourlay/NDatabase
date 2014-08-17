@@ -2,7 +2,7 @@ using System;
 using NDatabase;
 using NDatabase.Btree;
 using NDatabase.Core.BTree;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 using Test.NDatabase.Odb.Test;
 using Test.NDatabase.Tool;

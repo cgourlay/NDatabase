@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using NDatabase.Api;
 using NDatabase.Exceptions;
-using NDatabase.Tool.Wrappers;
 using NDatabase.TypeResolution;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Meta
 {

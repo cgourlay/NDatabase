@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NDatabase.Tool.Wrappers
+namespace NDatabase.Utilities.Wrappers
 {
     internal class OdbList<TItem> : List<TItem>, IOdbList<TItem>
     {

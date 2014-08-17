@@ -1,6 +1,6 @@
 using System;
 
-namespace NDatabase.Tool.Wrappers
+namespace NDatabase.Utilities.Wrappers
 {
     internal static class OdbTime
     {

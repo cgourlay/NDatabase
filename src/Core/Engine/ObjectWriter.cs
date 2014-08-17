@@ -10,7 +10,6 @@ using NDatabase.Meta;
 using NDatabase.Meta.Introspector;
 using NDatabase.Oid;
 using NDatabase.Storage;
-using NDatabase.Tool;
 using NDatabase.Triggers;
 using NDatabase.Utilities.Extensions;
 using NDatabase.Utilities.Helpers;

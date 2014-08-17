@@ -2,7 +2,7 @@ using System;
 using NDatabase.Api;
 using NDatabase.Core.Engine;
 using NDatabase.Exceptions;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Query.List
 {

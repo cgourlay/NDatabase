@@ -5,10 +5,9 @@ using System.Reflection;
 using NDatabase.Api;
 using NDatabase.Container;
 using NDatabase.Services;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.TypeResolution;
 using NDatabase.Utilities.Extensions;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Meta.Introspector
 {

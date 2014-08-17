@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NDatabase.Api;
 using NDatabase.Core;
 using NDatabase.Core.Engine;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
-using NDatabase.Tool;
 using NDatabase.Utilities.Helpers;
 
 namespace NDatabase.Transaction

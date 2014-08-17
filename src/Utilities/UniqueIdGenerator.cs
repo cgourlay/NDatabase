@@ -1,6 +1,6 @@
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
-namespace NDatabase.Tool
+namespace NDatabase.Utilities
 {
     internal static class UniqueIdGenerator
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using NDatabase.Api.Query;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Query.Criteria
 {

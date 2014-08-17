@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NDatabase.Btree;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 
 namespace Test.NDatabase.Odb.Test.Btree.Odb

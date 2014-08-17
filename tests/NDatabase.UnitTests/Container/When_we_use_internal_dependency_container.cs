@@ -1,7 +1,6 @@
 ﻿using Moq;
 using NDatabase.Api;
 using NDatabase.Container;
-using NDatabase.Core;
 using NDatabase.Core.Engine;
 using NDatabase.Meta;
 using NDatabase.Services;

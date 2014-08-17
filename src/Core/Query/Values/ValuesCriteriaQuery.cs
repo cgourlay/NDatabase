@@ -5,9 +5,8 @@ using NDatabase.Api.Query;
 using NDatabase.Core.Query.Criteria;
 using NDatabase.Core.Query.Execution;
 using NDatabase.Exceptions;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.Utilities.Extensions;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Query.Values
 {

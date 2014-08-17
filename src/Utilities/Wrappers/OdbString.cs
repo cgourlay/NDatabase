@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NDatabase.Utilities.Extensions;
 
-namespace NDatabase.Tool.Wrappers
+namespace NDatabase.Utilities.Wrappers
 {
     internal static class OdbString
     {

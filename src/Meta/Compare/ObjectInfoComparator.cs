@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Meta.Compare
 {

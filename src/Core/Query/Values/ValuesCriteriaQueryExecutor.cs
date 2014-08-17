@@ -3,7 +3,7 @@ using NDatabase.Api.Query;
 using NDatabase.Core.Engine;
 using NDatabase.Core.Query.Criteria;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Query.Values
 {

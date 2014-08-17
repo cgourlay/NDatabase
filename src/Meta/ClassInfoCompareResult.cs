@@ -1,7 +1,6 @@
 using System.Text;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.Utilities.Extensions;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Meta
 {

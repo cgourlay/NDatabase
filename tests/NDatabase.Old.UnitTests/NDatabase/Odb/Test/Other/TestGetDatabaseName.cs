@@ -1,5 +1,3 @@
-using NDatabase;
-using NDatabase.Core;
 using NDatabase.Core.Engine;
 using NUnit.Framework;
 

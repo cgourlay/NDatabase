@@ -1,7 +1,7 @@
 using System;
 using NDatabase.Api;
 using NDatabase.Api.Query;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 using Test.NDatabase.Odb.Test.VO.Attribute;
 

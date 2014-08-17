@@ -1,9 +1,8 @@
 using System;
 using System.Text;
 using NDatabase.Exceptions;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.Utilities.Helpers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.IO
 {

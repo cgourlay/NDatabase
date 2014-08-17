@@ -4,7 +4,7 @@ using NDatabase.Api;
 using NDatabase.Api.Query;
 using NDatabase.Core;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace Test.NDatabase.Odb.Test.IO
 {

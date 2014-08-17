@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using NDatabase;
 using NDatabase.Btree;
 using NDatabase.Core.BTree;
 using NUnit.Framework;

@@ -6,7 +6,6 @@ using NDatabase.Cache;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Meta.Introspector;
-using NDatabase.Tool;
 using NDatabase.Triggers;
 using NDatabase.Utilities.Helpers;
 

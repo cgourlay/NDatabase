@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using NDatabase.Meta;
-using NDatabase.Oid;
 using NUnit.Framework;
 
 namespace NDatabase.UnitTests.Metadata

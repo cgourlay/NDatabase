@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NDatabase.Api;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using NDatabase.Api.Query;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 using NDatabase.Btree;
 using NDatabase.Cache;
 using NDatabase.Container;
@@ -33,9 +33,8 @@ using NDatabase.Core.Session;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Storage;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.Utilities.Helpers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Engine
 {

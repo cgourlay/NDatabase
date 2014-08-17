@@ -1,10 +1,9 @@
 using System;
-using NDatabase;
 using NDatabase.Api;
 using NDatabase.Api.Query;
 using NDatabase.Core.Query;
 using NDatabase.Exceptions;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 
 namespace Test.NDatabase.Odb.Test.Index

@@ -7,10 +7,9 @@ using NDatabase.Indexing;
 using NDatabase.Meta;
 using NDatabase.Meta.Compare;
 using NDatabase.Storage;
-using NDatabase.Tool;
-using NDatabase.Tool.Wrappers;
 using NDatabase.Triggers;
 using NDatabase.Utilities.Extensions;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Core.Engine
 {

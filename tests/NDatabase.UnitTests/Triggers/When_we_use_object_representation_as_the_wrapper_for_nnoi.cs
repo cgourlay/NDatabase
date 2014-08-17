@@ -5,7 +5,6 @@ using NDatabase.Core;
 using NDatabase.Core.Session;
 using NDatabase.Meta;
 using NDatabase.Meta.Introspector;
-using NDatabase.Oid;
 using NDatabase.Triggers;
 using NDatabase.UnitTests.TestData;
 using NUnit.Framework;

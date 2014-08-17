@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace NDatabase.Tool.Wrappers
+namespace NDatabase.Utilities.Wrappers
 {
     internal sealed class OdbHashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {

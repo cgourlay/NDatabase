@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using NDatabase;
 using NDatabase.Api.Query;
 using NDatabase.Meta;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 using Test.NDatabase.Odb.Test.VO.Login;
 

@@ -5,7 +5,7 @@ using NDatabase.Api;
 using NDatabase.Exceptions;
 using NDatabase.Meta;
 using NDatabase.Storage;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 
 namespace NDatabase.Cache
 {

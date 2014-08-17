@@ -11,7 +11,6 @@ using NDatabase.Core.Session;
 using NDatabase.Exceptions;
 using NDatabase.Indexing;
 using NDatabase.Meta;
-using NDatabase.Tool;
 using NDatabase.Utilities.Helpers;
 
 namespace NDatabase.Core.Query.Criteria

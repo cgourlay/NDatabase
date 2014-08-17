@@ -1,7 +1,6 @@
 using NDatabase;
 using NDatabase.Cache;
 using NDatabase.Meta;
-using NDatabase.Oid;
 using NUnit.Framework;
 
 namespace Test.NDatabase.Odb.Test.Cache

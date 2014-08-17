@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using NDatabase;
-using NDatabase.Tool.Wrappers;
+using NDatabase.Utilities.Wrappers;
 using NUnit.Framework;
 using Test.NDatabase.Odb.Test.VO.Attribute;
 

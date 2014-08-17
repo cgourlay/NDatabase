@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using NDatabase.Api;
 using NDatabase.Exceptions;
 using NDatabase.Oid;
-using NDatabase.Tool;
 using NDatabase.TypeResolution;
 using NDatabase.Utilities.Extensions;
 
